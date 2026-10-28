@@ -7,6 +7,7 @@ import software.ulpgc.chess.infraestructure.adapters.deserializer.FenBoardDeseri
 import software.ulpgc.chess.application.model.Board;
 import software.ulpgc.chess.application.model.Piece;
 import software.ulpgc.chess.application.model.Square;
+import software.ulpgc.chess.infraestructure.adapters.serializer.FenBoardSerializer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
