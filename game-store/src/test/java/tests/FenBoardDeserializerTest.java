@@ -4,9 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import software.ulpgc.chess.infraestructure.adapters.FenBoardDeserializer;
-import software.ulpgc.chess.application.domain.model.Board;
-import software.ulpgc.chess.application.domain.model.Piece;
-import software.ulpgc.chess.application.domain.model.Square;
+import software.ulpgc.chess.application.model.Board;
+import software.ulpgc.chess.application.model.Piece;
+import software.ulpgc.chess.application.model.Square;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

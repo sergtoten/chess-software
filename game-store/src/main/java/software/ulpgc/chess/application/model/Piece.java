@@ -1,4 +1,4 @@
-package software.ulpgc.chess.application.domain.model;
+package software.ulpgc.chess.application.model;
 
 public enum Piece {
     WhitePawn, WhiteRook, WhiteKnight, WhiteBishop, WhiteKing, WhiteQueen,
