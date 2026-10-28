@@ -5,6 +5,6 @@ import software.ulpgc.chess.application.model.State;
 
 public interface StateDeserializer {
 
-    State deserialize(String position);
+    State deserialize(String value);
 
 }

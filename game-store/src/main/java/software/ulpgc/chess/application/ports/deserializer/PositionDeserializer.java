@@ -4,6 +4,6 @@ import software.ulpgc.chess.application.model.Position;
 
 public interface PositionDeserializer {
 
-    Position deserialize(String position);
+    Position deserialize(String value);
 
 }
