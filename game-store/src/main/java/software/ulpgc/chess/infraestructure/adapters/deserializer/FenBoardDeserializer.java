@@ -1,10 +1,10 @@
-package software.ulpgc.chess.infraestructure.adapters;
+package software.ulpgc.chess.infraestructure.adapters.deserializer;
 
 import software.ulpgc.chess.application.model.Board;
 import software.ulpgc.chess.application.model.Piece;
 import software.ulpgc.chess.application.model.Rank;
 import software.ulpgc.chess.application.model.Square;
-import software.ulpgc.chess.application.ports.BoardDeserializer;
+import software.ulpgc.chess.application.ports.deserializer.BoardDeserializer;
 
 import java.util.HashMap;
 import java.util.Map;

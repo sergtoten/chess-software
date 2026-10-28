@@ -1,4 +1,4 @@
-package software.ulpgc.chess.application.ports;
+package software.ulpgc.chess.application.ports.deserializer;
 
 import software.ulpgc.chess.application.model.Board;
 
