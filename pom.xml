@@ -5,12 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>software.ulpgc.chess</groupId>
-    <artifactId>chessProject</artifactId>
+    <artifactId>chess-software</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>game-store</module>
         <module>login-store</module>
+        <module>backend</module>
+        <module>fronted</module>
     </modules>
 
     <properties>

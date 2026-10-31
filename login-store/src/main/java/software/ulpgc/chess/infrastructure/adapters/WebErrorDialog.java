@@ -1,4 +1,4 @@
-package software.ulpgc.chess.infraestructure.adapters;
+package software.ulpgc.chess.infrastructure.adapters;
 
 import software.ulpgc.chess.application.ports.ErrorDialog;
 

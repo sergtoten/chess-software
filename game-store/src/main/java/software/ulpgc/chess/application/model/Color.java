@@ -2,7 +2,7 @@ package software.ulpgc.chess.application.model;
 
 public enum Color {
 
-    White('w'), Black('w');
+    White('w'), Black('b');
 
     private final char symbol;
 

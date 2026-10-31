@@ -1,9 +1,9 @@
-package tests;
+package tests.serializer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import software.ulpgc.chess.infraestructure.adapters.serializer.FenBoardSerializer;
+import software.ulpgc.chess.infrastructure.adapters.serializer.FenBoardSerializer;
 import software.ulpgc.chess.application.model.Board;
 import software.ulpgc.chess.application.model.Piece;
 import software.ulpgc.chess.application.model.Square;

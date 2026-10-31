@@ -1,4 +1,4 @@
-package software.ulpgc.chess.infraestructure.adapters.serializer;
+package software.ulpgc.chess.infrastructure.adapters.serializer;
 
 import software.ulpgc.chess.application.model.Board;
 import software.ulpgc.chess.application.model.File;

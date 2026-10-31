@@ -1,4 +1,4 @@
-package software.ulpgc.chess.infraestructure.adapters.deserializer;
+package software.ulpgc.chess.infrastructure.adapters.deserializer;
 
 import software.ulpgc.chess.application.model.CastlingRight;
 import software.ulpgc.chess.application.model.Color;

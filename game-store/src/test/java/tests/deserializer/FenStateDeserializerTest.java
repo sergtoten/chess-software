@@ -1,4 +1,4 @@
-package tests;
+package tests.deserializer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,7 +8,7 @@ import software.ulpgc.chess.application.model.CastlingRight;
 import software.ulpgc.chess.application.model.Color;
 import software.ulpgc.chess.application.model.Square;
 import software.ulpgc.chess.application.model.State;
-import software.ulpgc.chess.infraestructure.adapters.deserializer.FenStateDeserializer;
+import software.ulpgc.chess.infrastructure.adapters.deserializer.FenStateDeserializer;
 
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;

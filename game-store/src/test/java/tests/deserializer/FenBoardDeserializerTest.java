@@ -1,13 +1,12 @@
-package tests;
+package tests.deserializer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import software.ulpgc.chess.infraestructure.adapters.deserializer.FenBoardDeserializer;
+import software.ulpgc.chess.infrastructure.adapters.deserializer.FenBoardDeserializer;
 import software.ulpgc.chess.application.model.Board;
 import software.ulpgc.chess.application.model.Piece;
 import software.ulpgc.chess.application.model.Square;
-import software.ulpgc.chess.infraestructure.adapters.serializer.FenBoardSerializer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,7 +25,7 @@ public class FenBoardDeserializerTest {
         String fenInitial = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         Board expectedBoard = Board.initial();
         Board actualBoard = deserializer.deserialize(fenInitial);
-        assertThat(actualBoard).isNotNull();
+        assertThat(actualBoard).isEqualTo(expectedBoard);
     }
 
     @Test
