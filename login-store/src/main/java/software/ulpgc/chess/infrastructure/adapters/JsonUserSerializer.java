@@ -1,6 +1,6 @@
 package software.ulpgc.chess.infrastructure.adapters;
 
-import software.ulpgc.chess.application.model.User;
+import software.ulpgc.chess.application.domain.model.User;
 import software.ulpgc.chess.application.ports.UserSerializer;
 
 public class JsonUserSerializer implements UserSerializer {

@@ -1,9 +1,9 @@
 package software.ulpgc.chess.infrastructure.adapters.deserializer;
 
-import software.ulpgc.chess.application.model.CastlingRight;
-import software.ulpgc.chess.application.model.Color;
-import software.ulpgc.chess.application.model.Square;
-import software.ulpgc.chess.application.model.State;
+import software.ulpgc.chess.application.domain.model.CastlingRight;
+import software.ulpgc.chess.application.domain.model.Color;
+import software.ulpgc.chess.application.domain.model.Square;
+import software.ulpgc.chess.application.domain.model.State;
 import software.ulpgc.chess.application.ports.deserializer.StateDeserializer;
 
 import java.util.*;

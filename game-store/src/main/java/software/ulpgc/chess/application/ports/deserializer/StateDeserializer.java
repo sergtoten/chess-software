@@ -1,7 +1,6 @@
 package software.ulpgc.chess.application.ports.deserializer;
 
-import software.ulpgc.chess.application.model.Position;
-import software.ulpgc.chess.application.model.State;
+import software.ulpgc.chess.application.domain.model.State;
 
 public interface StateDeserializer {
 

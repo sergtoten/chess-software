@@ -1,4 +1,4 @@
-package software.ulpgc.chess.application.model;
+package software.ulpgc.chess.application.domain.model;
 
 import java.util.Optional;
 import java.util.Set;

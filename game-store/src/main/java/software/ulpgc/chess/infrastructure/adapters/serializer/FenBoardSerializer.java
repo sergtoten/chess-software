@@ -1,10 +1,10 @@
 package software.ulpgc.chess.infrastructure.adapters.serializer;
 
-import software.ulpgc.chess.application.model.Board;
-import software.ulpgc.chess.application.model.File;
-import software.ulpgc.chess.application.model.Piece;
-import software.ulpgc.chess.application.model.Rank;
-import software.ulpgc.chess.application.model.Square;
+import software.ulpgc.chess.application.domain.model.Board;
+import software.ulpgc.chess.application.domain.model.File;
+import software.ulpgc.chess.application.domain.model.Piece;
+import software.ulpgc.chess.application.domain.model.Rank;
+import software.ulpgc.chess.application.domain.model.Square;
 import software.ulpgc.chess.application.ports.serializer.BoardSerializer;
 
 import java.util.Map;

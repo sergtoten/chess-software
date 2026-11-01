@@ -1,12 +1,12 @@
-package tests.serializer;
+package tests.fenSerializer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import software.ulpgc.chess.infrastructure.adapters.serializer.FenBoardSerializer;
-import software.ulpgc.chess.application.model.Board;
-import software.ulpgc.chess.application.model.Piece;
-import software.ulpgc.chess.application.model.Square;
+import software.ulpgc.chess.application.domain.model.Board;
+import software.ulpgc.chess.application.domain.model.Piece;
+import software.ulpgc.chess.application.domain.model.Square;
 
 import java.util.HashMap;
 

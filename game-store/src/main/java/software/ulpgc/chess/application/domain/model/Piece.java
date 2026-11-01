@@ -1,4 +1,4 @@
-package software.ulpgc.chess.application.model;
+package software.ulpgc.chess.application.domain.model;
 
 public enum Piece {
     WhitePawn, WhiteRook, WhiteKnight, WhiteBishop, WhiteKing, WhiteQueen,
@@ -10,6 +10,10 @@ public enum Piece {
 
     public boolean isBlack() {
         return this.name().startsWith("Black");
+    }
+
+    public Color color() {
+        return isWhite() ? Color.White : Color.Black;
     }
 
     public boolean isRook() {

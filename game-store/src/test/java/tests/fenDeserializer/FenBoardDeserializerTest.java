@@ -1,12 +1,12 @@
-package tests.deserializer;
+package tests.fenDeserializer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import software.ulpgc.chess.infrastructure.adapters.deserializer.FenBoardDeserializer;
-import software.ulpgc.chess.application.model.Board;
-import software.ulpgc.chess.application.model.Piece;
-import software.ulpgc.chess.application.model.Square;
+import software.ulpgc.chess.application.domain.model.Board;
+import software.ulpgc.chess.application.domain.model.Piece;
+import software.ulpgc.chess.application.domain.model.Square;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
