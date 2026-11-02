@@ -47,6 +47,21 @@ public class MoveGenerate {
         return moves;
     }
 
+    private List<Move> walk(Board board, Square source, int[][] directions, boolean sliding) {
+        Color color = board.pieces().get(source).color();
+        List<Move> moves = new ArrayList<>();
+        for (int[] direction : directions) {
+            int file = source.file().ordinal() + direction[0];
+            int rank = source.rank().ordinal() + direction[1];
+            if (sliding) {
+                moves.addAll(slide(board, file, rank, direction, color, source));
+            } else {
+                moves.addAll(jump(board, file, rank, color, source));
+            }
+        }
+        return moves;
+    }
+
     private List<Move> pawnAdvances(Board board, Square source, int direction, Rank startRank) {
         List<Move> moves = new ArrayList<>();
         int file = source.file().ordinal();
@@ -70,21 +85,6 @@ public class MoveGenerate {
             Square target = Square.at(file, rank);
             Piece found = board.pieces().get(target);
             if (found != null && found.color() != pawn.color()) moves.add(new Move(source, target));
-        }
-        return moves;
-    }
-
-    private List<Move> walk(Board board, Square source, int[][] directions, boolean sliding) {
-        Color color = board.pieces().get(source).color();
-        List<Move> moves = new ArrayList<>();
-        for (int[] direction : directions) {
-            int file = source.file().ordinal() + direction[0];
-            int rank = source.rank().ordinal() + direction[1];
-            if (sliding) {
-                moves.addAll(slide(board, file, rank, direction, color, source));
-            } else {
-                moves.addAll(jump(board, file, rank, color, source));
-            }
         }
         return moves;
     }

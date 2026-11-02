@@ -14,4 +14,8 @@ public enum Color {
         return this.symbol;
     }
 
+    public Color oppositeColor() {
+        return this == White ? Black : White;
+    }
+
 }

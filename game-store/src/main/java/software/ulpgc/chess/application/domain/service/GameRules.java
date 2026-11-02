@@ -17,7 +17,7 @@ public class GameRules {
     }
 
     private boolean kingSafe(Board board, Color turn) {
-        Color color = turn == Color.White ? Color.Black : Color.White;
+        Color color = turn.oppositeColor();
         List<Move> moves = moveGenerate.movesOf(board, color);
         for (Move move : moves) {
             Piece to = board.pieces().get(move.to());
