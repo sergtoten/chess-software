@@ -1,5 +1,6 @@
 package software.ulpgc.chess.application.domain.service;
 
+import software.ulpgc.chess.application.domain.IllegalMoveException;
 import software.ulpgc.chess.application.domain.model.*;
 
 import java.util.EnumSet;
@@ -14,15 +15,11 @@ public class MoveApplier {
     public MoveApplier(GameRules gameRules) {
         this.gameRules = gameRules;
     }
-
-    private Color playTurn(State state) {
-        return state.turn();
-    }
     public Position applyMove(Position position, Move move) {
-        Color colorTurn = playTurn(position.state());
+        Color colorTurn = position.state().turn();
         Board actualBoard = position.board();
         List<Move> legalMoves = gameRules.legalMove(position.board(), colorTurn);
-        if (!legalMoves.contains(move)) return null;
+        if (!legalMoves.contains(move)) throw new IllegalMoveException("Movimiento ilegal");
         State state = updateState(actualBoard, position, colorTurn, move);
         return new Position(position.board().move(move.from(), move.to()), state);
 
@@ -31,7 +28,7 @@ public class MoveApplier {
     private State updateState(Board actualBoard, Position position, Color turn, Move move) {
         int fullMoveNumber = position.state().fullMoveNumber();
         if (turn == Color.Black) fullMoveNumber++;
-        int halfMoveClock = updateHalfMove(actualBoard, position, turn, move);
+        int halfMoveClock = updateHalfMove(actualBoard, position, move);
         Set<CastlingRight> castling = castlingRight(actualBoard, move, turn, position);
         return new State(turn.oppositeColor(), castling, Optional.empty(), halfMoveClock, fullMoveNumber);
     }
@@ -61,12 +58,12 @@ public class MoveApplier {
         if (square.equals(Square.at("a8"))) castling.remove(CastlingRight.BlackLong);
         if (square.equals(Square.at("h8"))) castling.remove(CastlingRight.BlackShort);
     }
-    private int updateHalfMove(Board actualBoard, Position position, Color turn, Move move) {
+    private int updateHalfMove(Board actualBoard, Position position, Move move) {
         Piece sourcePiece = actualBoard.pieces().get(move.from());
         Piece destinationPiece = actualBoard.pieces().get(move.to());
 
         if (sourcePiece.isPawn()) return 0;
-        else if (destinationPiece != null && destinationPiece.color() != turn) return 0;
+        else if (destinationPiece != null) return 0;
         return position.state().halfMoveClock() + 1;
     }
 
