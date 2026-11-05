@@ -57,7 +57,6 @@ public class FenStateSerializer implements StateSerializer {
                 .map(String::valueOf)
                 .collect(Collectors.joining());
     }
-
     private String colorTurn(Color turn) {
         return TURN_COLORS.get(turn).toString();
     }

@@ -32,4 +32,8 @@ public record Square(File file, Rank rank) {
                 .findFirst()
                 .orElse(null);
     }
+
+    public static boolean isInside(int file, int rank) {
+        return (file >= 0 && file < 8) && (rank >= 0 && rank < 8);
+    }
 }

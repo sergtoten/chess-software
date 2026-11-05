@@ -59,4 +59,8 @@ public record Board(Map<Square, Piece> pieces) {
         );
     }
 
+    public Piece pieceAt(Square square) {
+        return pieces().get(square);
+    }
+
 }
