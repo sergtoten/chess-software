@@ -11,8 +11,25 @@ public record Board(Map<Square, Piece> pieces) {
     public Board move(Square from, Square to) {
         Map<Square, Piece> newPieces = new HashMap<>(this.pieces);
         Piece movingPiece = newPieces.remove(from);
+        if (movingPiece.isKing() && Math.abs(from.file().ordinal() - to.file().ordinal()) > 1) {
+            moveCastlingRook(newPieces, from, to);
+        }
         newPieces.put(to, movingPiece);
         return new Board(Map.copyOf(newPieces));
+    }
+
+    private void moveCastlingRook(Map<Square, Piece> newPieces, Square from, Square to) {
+        int rank = from.rank().ordinal();
+        if (from.file().ordinal() > to.file().ordinal()) {
+            Piece rook = newPieces.remove(Square.at(to.file().ordinal() - 2, rank));
+            Square rookTo = Square.at(to.file().ordinal() + 1, rank);
+            newPieces.put(rookTo, rook);
+        }
+        else {
+            Piece rook = newPieces.remove(Square.at(to.file().ordinal() + 1, rank));
+            Square rookTo = Square.at(to.file().ordinal() - 1, rank);
+            newPieces.put(rookTo, rook);
+        }
     }
 
     private static Map<Square, Piece> initialMap() {

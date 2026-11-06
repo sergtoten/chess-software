@@ -19,14 +19,16 @@ public class CastlingMoveGenerator {
     private static final int[] LONG_EMPTY_FILES = {1, 2, 3};
 
     public List<Move> castlingMoves(Board board, Color turn, State state) {
-        List<Move> moves = new ArrayList<>();
         int rank = turn == Color.White ? 0 : 7;
         Square kingSquare = Square.at(KING_FILE, rank);
-        if (!isKingOf(board.pieceAt(kingSquare), turn)) return moves;
+        if (!isKingOf(board.pieceAt(kingSquare), turn)) return List.of();
+        return castlingMovesFor(board, turn, state, rank, kingSquare);
+    }
 
+    private List<Move> castlingMovesFor(Board board, Color turn, State state, int rank, Square kingSquare) {
+        List<Move> moves = new ArrayList<>();
         CastlingRight shortRight = turn == Color.White ? CastlingRight.WhiteShort : CastlingRight.BlackShort;
         CastlingRight longRight = turn == Color.White ? CastlingRight.WhiteLong : CastlingRight.BlackLong;
-
         if (canCastle(board, turn, rank, state.castlings(), shortRight, SHORT_ROOK_FILE, SHORT_EMPTY_FILES)) {
             moves.add(new Move(kingSquare, Square.at(SHORT_TARGET_FILE, rank)));
         }
