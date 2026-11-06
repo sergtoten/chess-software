@@ -36,15 +36,12 @@ public class GameRules {
     }
 
     private boolean kingSafe(Board board, Color turn) {
-        Color color = turn.oppositeColor();
-        List<Move> moves = moveGenerate.movesOf(board, color);
-        for (Move move : moves) {
-            Piece to = board.pieceAt(move.to());
-            if (to != null && to.isKing()) {
-                return false;
-            }
-        }
-        return true;
+        return moveGenerate.movesOf(board, turn.oppositeColor())
+                .stream()
+                .noneMatch(move -> {
+                    Piece piece = board.pieceAt(move.to());
+                    return piece != null && piece.isKing();
+                });
     }
 
     private List<Move> castlingLegalMoves(Board board, Color turn, State state) {
@@ -55,23 +52,16 @@ public class GameRules {
     }
 
     private boolean isCastlingLegal(Board board, Color turn, Move move) {
-        if (!kingSafe(board, turn)) return false;
-        if (!passSquare(board, turn, move)) return false;
-        if (!kingSafe(board.move(move.from(), move.to()), turn)) return false;
-        return true;
+        return kingSafe(board, turn) && isPassingSquareSafe(board, turn, move);
     }
 
-    private boolean passSquare(Board board, Color turn, Move move) {
-        Square pass = passSquare(move);
-        return kingSafe(board.move(move.from(), pass), turn);
+    private boolean isPassingSquareSafe(Board board, Color turn, Move move) {
+        Square passing = passingSquare(move);
+        return kingSafe(board.move(move.from(), passing), turn);
     }
 
-    private Square passSquare(Move move) {
-        if (move.to().equals(Square.at("g1"))) return Square.at("f1");
-        if (move.to().equals(Square.at("c1"))) return Square.at("d1");
-        if (move.to().equals(Square.at("g8"))) return Square.at("f8");
-        if (move.to().equals(Square.at("c8"))) return Square.at("d8");
-        return null;
+    private Square passingSquare(Move move) {
+        int file = (move.from().file().ordinal() + move.to().file().ordinal()) / 2;
+        return Square.at(file, move.from().rank().ordinal());
     }
-
 }
