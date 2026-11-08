@@ -6,10 +6,16 @@ import org.junit.jupiter.api.Test;
 import software.ulpgc.chess.application.domain.model.Board;
 import software.ulpgc.chess.application.domain.model.Color;
 import software.ulpgc.chess.application.domain.model.Move;
+import software.ulpgc.chess.application.domain.model.Position;
 import software.ulpgc.chess.application.domain.model.Square;
+import software.ulpgc.chess.application.domain.model.State;
+import software.ulpgc.chess.application.domain.service.CastlingMoveGenerator;
 import software.ulpgc.chess.application.domain.service.MoveGenerate;
+import software.ulpgc.chess.application.domain.service.PawnMoveGenerate;
 import software.ulpgc.chess.application.domain.service.GameRules;
 import software.ulpgc.chess.infrastructure.adapters.deserializer.FenBoardDeserializer;
+import software.ulpgc.chess.infrastructure.adapters.deserializer.FenPositionDeserializer;
+import software.ulpgc.chess.infrastructure.adapters.deserializer.FenStateDeserializer;
 
 import java.util.List;
 
@@ -26,13 +32,15 @@ class GameRulesTest {
     private static final String ROOK_CONTROLS_RANK_2 = "4k3/8/8/8/8/8/r7/4K3";
     private static final String BLOCK_OR_MOVE = "4k3/8/8/8/8/8/8/R3K2r";
 
-    private GameRules validator;
+    private GameRules rules;
     private FenBoardDeserializer deserializer;
+    private FenPositionDeserializer positionDeserializer;
 
     @BeforeEach
     void setUp() {
-        validator = new GameRules(new MoveGenerate());
+        rules = new GameRules(new MoveGenerate(new PawnMoveGenerate()), new CastlingMoveGenerator());
         deserializer = new FenBoardDeserializer();
+        positionDeserializer = new FenPositionDeserializer(deserializer, new FenStateDeserializer());
     }
 
     private Move move(String from, String to) {
@@ -43,9 +51,14 @@ class GameRulesTest {
         return deserializer.deserialize(fen);
     }
 
+    private List<Move> legalMovesOf(String fullFen) {
+        Position position = positionDeserializer.deserialize(fullFen);
+        return rules.legalMoves(position.board(), position.state().turn(), position.state());
+    }
+
     private List<Move> legalMovesFrom(String fen, Color color, String square) {
         Square source = Square.at(square);
-        return validator.legalMove(board(fen), color).stream()
+        return rules.legalMoves(board(fen), color, State.initial()).stream()
                 .filter(move -> move.from().equals(source))
                 .toList();
     }
@@ -55,20 +68,20 @@ class GameRulesTest {
     @Test
     @DisplayName("En la posición inicial las blancas tienen 20 movimientos legales")
     void initialPositionWhiteHasTwentyLegalMoves() {
-        assertThat(validator.legalMove(board(INITIAL), Color.White)).hasSize(20);
+        assertThat(rules.legalMoves(board(INITIAL), Color.White, State.initial())).hasSize(20);
     }
 
     @Test
     @DisplayName("En la posición inicial las negras tienen 20 movimientos legales")
     void initialPositionBlackHasTwentyLegalMoves() {
-        assertThat(validator.legalMove(board(INITIAL), Color.Black)).hasSize(20);
+        assertThat(rules.legalMoves(board(INITIAL), Color.Black, State.initial())).hasSize(20);
     }
 
     @Test
     @DisplayName("La posición inicial no es mate ni ahogado")
     void initialPositionIsNeitherMateNorStalemate() {
-        assertThat(validator.isCheckmate(board(INITIAL), Color.White)).isFalse();
-        assertThat(validator.isStalemate(board(INITIAL), Color.White)).isFalse();
+        assertThat(rules.isCheckmate(board(INITIAL), Color.White, State.initial())).isFalse();
+        assertThat(rules.isStalemate(board(INITIAL), Color.White, State.initial())).isFalse();
     }
 
     // ---------- Jaque mate ----------
@@ -76,26 +89,26 @@ class GameRulesTest {
     @Test
     @DisplayName("El mate del loco es jaque mate para las blancas")
     void foolsMateIsCheckmate() {
-        assertThat(validator.isCheckmate(board(FOOLS_MATE), Color.White)).isTrue();
+        assertThat(rules.isCheckmate(board(FOOLS_MATE), Color.White, State.initial())).isTrue();
     }
 
     @Test
     @DisplayName("En el mate del loco las blancas no tienen movimientos legales")
     void foolsMateHasNoLegalMoves() {
-        assertThat(validator.legalMove(board(FOOLS_MATE), Color.White)).isEmpty();
+        assertThat(rules.legalMoves(board(FOOLS_MATE), Color.White, State.initial())).isEmpty();
     }
 
     @Test
     @DisplayName("El mate del loco no es rey ahogado")
     void foolsMateIsNotStalemate() {
-        assertThat(validator.isStalemate(board(FOOLS_MATE), Color.White)).isFalse();
+        assertThat(rules.isStalemate(board(FOOLS_MATE), Color.White, State.initial())).isFalse();
     }
 
     @Test
     @DisplayName("El mate del pasillo es jaque mate para las negras")
     void backRankMateIsCheckmate() {
-        assertThat(validator.isCheckmate(board(BACK_RANK_MATE), Color.Black)).isTrue();
-        assertThat(validator.isStalemate(board(BACK_RANK_MATE), Color.Black)).isFalse();
+        assertThat(rules.isCheckmate(board(BACK_RANK_MATE), Color.Black, State.initial())).isTrue();
+        assertThat(rules.isStalemate(board(BACK_RANK_MATE), Color.Black, State.initial())).isFalse();
     }
 
     // ---------- Rey ahogado ----------
@@ -103,19 +116,19 @@ class GameRulesTest {
     @Test
     @DisplayName("Sin jaque y sin movimientos legales es rey ahogado")
     void stalemateIsDetected() {
-        assertThat(validator.isStalemate(board(STALEMATE), Color.Black)).isTrue();
+        assertThat(rules.isStalemate(board(STALEMATE), Color.Black, State.initial())).isTrue();
     }
 
     @Test
     @DisplayName("El rey ahogado no es jaque mate")
     void stalemateIsNotCheckmate() {
-        assertThat(validator.isCheckmate(board(STALEMATE), Color.Black)).isFalse();
+        assertThat(rules.isCheckmate(board(STALEMATE), Color.Black, State.initial())).isFalse();
     }
 
     @Test
     @DisplayName("En el rey ahogado las negras no tienen movimientos legales")
     void stalemateHasNoLegalMoves() {
-        assertThat(validator.legalMove(board(STALEMATE), Color.Black)).isEmpty();
+        assertThat(rules.legalMoves(board(STALEMATE), Color.Black, State.initial())).isEmpty();
     }
 
     // ---------- Jaque que no es mate ----------
@@ -123,21 +136,21 @@ class GameRulesTest {
     @Test
     @DisplayName("Con el rey en jaque solo valen los movimientos que lo resuelven")
     void inCheckOnlyEscapesAreLegal() {
-        assertThat(validator.legalMove(board(CHECK_ROOK_ON_E4), Color.White)).containsExactlyInAnyOrder(
+        assertThat(rules.legalMoves(board(CHECK_ROOK_ON_E4), Color.White, State.initial())).containsExactlyInAnyOrder(
                 move("e1", "d1"), move("e1", "d2"), move("e1", "f1"), move("e1", "f2"));
     }
 
     @Test
     @DisplayName("Estar en jaque con salidas no es mate ni ahogado")
     void checkWithEscapesIsNeitherMateNorStalemate() {
-        assertThat(validator.isCheckmate(board(CHECK_ROOK_ON_E4), Color.White)).isFalse();
-        assertThat(validator.isStalemate(board(CHECK_ROOK_ON_E4), Color.White)).isFalse();
+        assertThat(rules.isCheckmate(board(CHECK_ROOK_ON_E4), Color.White, State.initial())).isFalse();
+        assertThat(rules.isStalemate(board(CHECK_ROOK_ON_E4), Color.White, State.initial())).isFalse();
     }
 
     @Test
     @DisplayName("Con el rey en jaque, el movimiento que no lo resuelve se descarta")
     void movesThatIgnoreTheCheckAreDiscarded() {
-        assertThat(validator.legalMove(board(BLOCK_OR_MOVE), Color.White)).containsExactlyInAnyOrder(
+        assertThat(rules.legalMoves(board(BLOCK_OR_MOVE), Color.White, State.initial())).containsExactlyInAnyOrder(
                 move("e1", "d2"), move("e1", "e2"), move("e1", "f2"));
     }
 
@@ -146,7 +159,7 @@ class GameRulesTest {
     @Test
     @DisplayName("El rey no puede moverse a una casilla atacada")
     void kingCannotMoveIntoAttackedSquare() {
-        assertThat(validator.legalMove(board(ROOK_CONTROLS_RANK_2), Color.White)).containsExactlyInAnyOrder(
+        assertThat(rules.legalMoves(board(ROOK_CONTROLS_RANK_2), Color.White, State.initial())).containsExactlyInAnyOrder(
                 move("e1", "d1"), move("e1", "f1"));
     }
 
@@ -159,7 +172,7 @@ class GameRulesTest {
     @Test
     @DisplayName("Con una pieza clavada, el rey sigue pudiendo moverse")
     void kingCanStillMoveWhenAPieceIsPinned() {
-        assertThat(validator.legalMove(board(PINNED_KNIGHT), Color.White)).containsExactlyInAnyOrder(
+        assertThat(rules.legalMoves(board(PINNED_KNIGHT), Color.White, State.initial())).containsExactlyInAnyOrder(
                 move("e1", "d1"), move("e1", "d2"), move("e1", "f1"), move("e1", "f2"));
     }
 
@@ -169,7 +182,130 @@ class GameRulesTest {
     @DisplayName("Calcular los movimientos legales no modifica el tablero")
     void legalMovesDoNotModifyTheBoard() {
         Board original = board(INITIAL);
-        validator.legalMove(original, Color.White);
+        rules.legalMoves(original, Color.White, State.initial());
         assertThat(original.equals(board(INITIAL))).isTrue();
+    }
+
+    // ---------- Jaque ----------
+
+    @Test
+    @DisplayName("La posición inicial no está en jaque para ningún color")
+    void initialPositionIsNotCheck() {
+        assertThat(rules.isCheck(board(INITIAL), Color.White)).isFalse();
+        assertThat(rules.isCheck(board(INITIAL), Color.Black)).isFalse();
+    }
+
+    @Test
+    @DisplayName("En el mate del loco las blancas están en jaque")
+    void foolsMateIsCheck() {
+        assertThat(rules.isCheck(board(FOOLS_MATE), Color.White)).isTrue();
+    }
+
+    @Test
+    @DisplayName("En el mate del loco las negras no están en jaque")
+    void foolsMateBlackIsNotCheck() {
+        assertThat(rules.isCheck(board(FOOLS_MATE), Color.Black)).isFalse();
+    }
+
+    @Test
+    @DisplayName("Una torre enemiga en la misma columna da jaque")
+    void rookOnTheSameFileIsCheck() {
+        assertThat(rules.isCheck(board(CHECK_ROOK_ON_E4), Color.White)).isTrue();
+    }
+
+    @Test
+    @DisplayName("El mate del pasillo deja a las negras en jaque")
+    void backRankMateBlackIsCheck() {
+        assertThat(rules.isCheck(board(BACK_RANK_MATE), Color.Black)).isTrue();
+    }
+
+    @Test
+    @DisplayName("El rey ahogado no está en jaque")
+    void stalemateIsNotCheck() {
+        assertThat(rules.isCheck(board(STALEMATE), Color.Black)).isFalse();
+    }
+
+    @Test
+    @DisplayName("Una pieza que bloquea el ataque evita el jaque")
+    void blockedAttackIsNotCheck() {
+        assertThat(rules.isCheck(board("4r1k1/8/8/8/8/8/4N3/4K3"), Color.White)).isFalse();
+    }
+
+    // ---------- Enroque ----------
+
+    @Test
+    @DisplayName("Las blancas pueden enrocar en corto y en largo si el camino está libre")
+    void whiteCanCastleBothSides() {
+        assertThat(legalMovesOf("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1"))
+                .contains(move("e1", "g1"), move("e1", "c1"));
+    }
+
+    @Test
+    @DisplayName("Las negras pueden enrocar en corto y en largo si el camino está libre")
+    void blackCanCastleBothSides() {
+        assertThat(legalMovesOf("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1"))
+                .contains(move("e8", "g8"), move("e8", "c8"));
+    }
+
+    @Test
+    @DisplayName("No se puede enrocar sin derechos de enroque")
+    void noCastlingWithoutRights() {
+        assertThat(legalMovesOf("r3k2r/8/8/8/8/8/8/R3K2R w - - 0 1"))
+                .doesNotContain(move("e1", "g1"), move("e1", "c1"));
+    }
+
+    @Test
+    @DisplayName("Solo se puede enrocar por el lado que conserva el derecho")
+    void onlyTheSideWithRight() {
+        assertThat(legalMovesOf("r3k2r/8/8/8/8/8/8/R3K2R w Kkq - 0 1"))
+                .contains(move("e1", "g1"));
+        assertThat(legalMovesOf("r3k2r/8/8/8/8/8/8/R3K2R w Kkq - 0 1"))
+                .doesNotContain(move("e1", "c1"));
+    }
+
+    @Test
+    @DisplayName("No se puede enrocar si hay una pieza entre el rey y la torre")
+    void noCastlingWithPieceInBetween() {
+        assertThat(legalMovesOf("r3k2r/8/8/8/8/8/8/R3KB1R w KQkq - 0 1"))
+                .doesNotContain(move("e1", "g1"));
+        assertThat(legalMovesOf("r3k2r/8/8/8/8/8/8/RN2K2R w KQkq - 0 1"))
+                .doesNotContain(move("e1", "c1"));
+    }
+
+    @Test
+    @DisplayName("No se puede enrocar con el rey en jaque")
+    void noCastlingWhileInCheck() {
+        assertThat(legalMovesOf("4r2k/8/8/8/8/8/8/R3K3 w Q - 0 1"))
+                .doesNotContain(move("e1", "c1"));
+    }
+
+    @Test
+    @DisplayName("No se puede enrocar si el rey cruza una casilla atacada")
+    void noCastlingThroughAttackedSquare() {
+        assertThat(legalMovesOf("3r3k/8/8/8/8/8/8/R3K3 w Q - 0 1"))
+                .doesNotContain(move("e1", "c1"));
+        assertThat(legalMovesOf("5rk1/8/8/8/8/8/8/4K2R w K - 0 1"))
+                .doesNotContain(move("e1", "g1"));
+    }
+
+    @Test
+    @DisplayName("No se puede enrocar si el rey acaba en una casilla atacada")
+    void noCastlingIntoAttackedSquare() {
+        assertThat(legalMovesOf("6rk/8/8/8/8/8/8/4K2R w K - 0 1"))
+                .doesNotContain(move("e1", "g1"));
+    }
+
+    @Test
+    @DisplayName("El enroque largo es legal aunque b1 esté atacada, porque el rey no la cruza")
+    void longCastlingIsLegalWhenOnlyB1IsAttacked() {
+        assertThat(legalMovesOf("1r5k/8/8/8/8/8/8/R3K3 w Q - 0 1"))
+                .contains(move("e1", "c1"));
+    }
+
+    @Test
+    @DisplayName("Las negras no pueden enrocar largo si d8 está atacada")
+    void blackNoCastlingThroughAttackedSquare() {
+        assertThat(legalMovesOf("r3k2r/8/8/8/8/8/3R4/4K3 b kq - 0 1"))
+                .doesNotContain(move("e8", "c8"));
     }
 }

@@ -35,6 +35,9 @@ public class GameRules {
         return List.copyOf(legalMoves);
     }
 
+    public boolean isCheck(Board board, Color turn) {
+        return !kingSafe(board, turn);
+    }
     private boolean kingSafe(Board board, Color turn) {
         return moveGenerate.movesOf(board, turn.oppositeColor())
                 .stream()

@@ -8,7 +8,9 @@ import software.ulpgc.chess.application.domain.model.Position;
 import software.ulpgc.chess.application.domain.model.Square;
 import software.ulpgc.chess.application.domain.service.GameRules;
 import software.ulpgc.chess.application.domain.service.MoveApplier;
+import software.ulpgc.chess.application.domain.service.CastlingMoveGenerator;
 import software.ulpgc.chess.application.domain.service.MoveGenerate;
+import software.ulpgc.chess.application.domain.service.PawnMoveGenerate;
 import software.ulpgc.chess.infrastructure.adapters.deserializer.FenBoardDeserializer;
 import software.ulpgc.chess.infrastructure.adapters.deserializer.FenPositionDeserializer;
 import software.ulpgc.chess.infrastructure.adapters.deserializer.FenStateDeserializer;
@@ -28,7 +30,7 @@ class MoveApplierTest {
 
     @BeforeEach
     void setUp() {
-        applier = new MoveApplier(new GameRules(new MoveGenerate()));
+        applier = new MoveApplier(new GameRules(new MoveGenerate(new PawnMoveGenerate()), new CastlingMoveGenerator()));
         deserializer = new FenPositionDeserializer(new FenBoardDeserializer(), new FenStateDeserializer());
         serializer = new FenPositionSerializer(new FenBoardSerializer(), new FenStateSerializer());
     }
@@ -127,5 +129,35 @@ class MoveApplierTest {
     void kingMoveWithoutRightsWorks() {
         assertThat(apply("4k3/8/8/8/8/8/8/4K3 w - - 0 1", "e1", "e2"))
                 .isEqualTo("4k3/8/8/8/8/8/4K3/8 b - - 1 1");
+    }
+
+    // ---------- Enroque ----------
+
+    @Test
+    @DisplayName("El enroque corto de las blancas mueve el rey a g1 y la torre a f1")
+    void whiteShortCastlingMovesTheRook() {
+        assertThat(apply("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1", "e1", "g1"))
+                .isEqualTo("r3k2r/8/8/8/8/8/8/R4RK1 b kq - 1 1");
+    }
+
+    @Test
+    @DisplayName("El enroque largo de las blancas mueve el rey a c1 y la torre a d1")
+    void whiteLongCastlingMovesTheRook() {
+        assertThat(apply("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1", "e1", "c1"))
+                .isEqualTo("r3k2r/8/8/8/8/8/8/2KR3R b kq - 1 1");
+    }
+
+    @Test
+    @DisplayName("El enroque corto de las negras mueve el rey a g8 y la torre a f8")
+    void blackShortCastlingMovesTheRook() {
+        assertThat(apply("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1", "e8", "g8"))
+                .isEqualTo("r4rk1/8/8/8/8/8/8/R3K2R w KQ - 1 2");
+    }
+
+    @Test
+    @DisplayName("El enroque largo de las negras mueve el rey a c8 y la torre a d8")
+    void blackLongCastlingMovesTheRook() {
+        assertThat(apply("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1", "e8", "c8"))
+                .isEqualTo("2kr3r/8/8/8/8/8/8/R3K2R w KQ - 1 2");
     }
 }

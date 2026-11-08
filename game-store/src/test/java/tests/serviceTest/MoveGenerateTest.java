@@ -8,6 +8,7 @@ import software.ulpgc.chess.application.domain.model.Color;
 import software.ulpgc.chess.application.domain.model.Move;
 import software.ulpgc.chess.application.domain.model.Square;
 import software.ulpgc.chess.application.domain.service.MoveGenerate;
+import software.ulpgc.chess.application.domain.service.PawnMoveGenerate;
 import software.ulpgc.chess.infrastructure.adapters.deserializer.FenBoardDeserializer;
 
 import java.util.List;
@@ -23,7 +24,7 @@ class MoveGenerateTest {
 
     @BeforeEach
     void setUp() {
-        generator = new MoveGenerate();
+        generator = new MoveGenerate(new PawnMoveGenerate());
         deserializer = new FenBoardDeserializer();
     }
 
