@@ -18,6 +18,12 @@ public record Board(Map<Square, Piece> pieces) {
         return new Board(Map.copyOf(newPieces));
     }
 
+    public Board promote(Square to, Piece piece) {
+        Map<Square, Piece> newPieces = new HashMap<>(this.pieces);
+        newPieces.put(to, piece);
+        return new Board(Map.copyOf(newPieces));
+    }
+
     private void moveCastlingRook(Map<Square, Piece> newPieces, Square from, Square to) {
         int rank = from.rank().ordinal();
         if (from.file().ordinal() > to.file().ordinal()) {

@@ -1,5 +1,7 @@
 package tests.serviceTest;
 
+import java.util.Optional;
+import software.ulpgc.chess.application.domain.model.Piece;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -78,6 +80,41 @@ class MoveApplierIllegalMoveTest {
     @DisplayName("Enrocar con una pieza en medio lanza IllegalMoveException")
     void castlingThroughAPieceThrows() {
         assertThatThrownBy(() -> apply("r3k2r/8/8/8/8/8/8/R3KB1R w KQkq - 0 1", "e1", "g1"))
+                .isInstanceOf(IllegalMoveException.class);
+    }
+
+    // ---------- Promoción inválida ----------
+
+    private Position applyPromoting(String from, String to, Piece piece) {
+        return applier.applyMove(deserializer.deserialize("7k/4P3/8/8/8/8/8/4K3 w - - 0 1"),
+                new Move(Square.at(from), Square.at(to)), Optional.of(piece));
+    }
+
+    @Test
+    @DisplayName("Llegar a la última fila sin elegir pieza lanza IllegalMoveException")
+    void promotionWithoutPieceThrows() {
+        assertThatThrownBy(() -> apply("7k/4P3/8/8/8/8/8/4K3 w - - 0 1", "e7", "e8"))
+                .isInstanceOf(IllegalMoveException.class);
+    }
+
+    @Test
+    @DisplayName("Promocionar a rey lanza IllegalMoveException")
+    void promotionToKingThrows() {
+        assertThatThrownBy(() -> applyPromoting("e7", "e8", Piece.WhiteKing))
+                .isInstanceOf(IllegalMoveException.class);
+    }
+
+    @Test
+    @DisplayName("Promocionar a peón lanza IllegalMoveException")
+    void promotionToPawnThrows() {
+        assertThatThrownBy(() -> applyPromoting("e7", "e8", Piece.WhitePawn))
+                .isInstanceOf(IllegalMoveException.class);
+    }
+
+    @Test
+    @DisplayName("Promocionar a una pieza del color contrario lanza IllegalMoveException")
+    void promotionToOpponentPieceThrows() {
+        assertThatThrownBy(() -> applyPromoting("e7", "e8", Piece.BlackQueen))
                 .isInstanceOf(IllegalMoveException.class);
     }
 }

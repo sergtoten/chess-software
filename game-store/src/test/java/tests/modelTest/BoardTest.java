@@ -1,5 +1,6 @@
 package tests.modelTest;
 
+import software.ulpgc.chess.application.domain.model.Piece;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -76,5 +77,35 @@ class BoardTest {
         Board original = deserializer.deserialize(BOTH_SIDES);
         original.move(Square.at("e1"), Square.at("g1"));
         assertThat(serializer.serialize(original)).isEqualTo(BOTH_SIDES);
+    }
+
+    // ---------- Promoción ----------
+
+    private String movePromoting(String fen, String from, String to, Piece piece) {
+        Board board = deserializer.deserialize(fen);
+        Board moved = board.move(Square.at(from), Square.at(to));
+        return serializer.serialize(moved.promote(Square.at(to), piece));
+    }
+
+    @Test
+    @DisplayName("Promote sustituye el peón blanco de la última fila por la pieza elegida")
+    void promoteReplacesWhitePawn() {
+        assertThat(movePromoting("7k/4P3/8/8/8/8/8/4K3", "e7", "e8", Piece.WhiteQueen))
+                .isEqualTo("4Q2k/8/8/8/8/8/8/4K3");
+    }
+
+    @Test
+    @DisplayName("Promote sustituye el peón negro de la primera fila por la pieza elegida")
+    void promoteReplacesBlackPawn() {
+        assertThat(movePromoting("4k3/8/8/8/8/8/4p3/K7", "e2", "e1", Piece.BlackKnight))
+                .isEqualTo("4k3/8/8/8/8/8/8/K3n3");
+    }
+
+    @Test
+    @DisplayName("Promote no modifica el tablero sobre el que se llama")
+    void promoteDoesNotModifyTheOriginalBoard() {
+        Board moved = deserializer.deserialize("7k/4P3/8/8/8/8/8/4K3").move(Square.at("e7"), Square.at("e8"));
+        moved.promote(Square.at("e8"), Piece.WhiteRook);
+        assertThat(serializer.serialize(moved)).isEqualTo("4P2k/8/8/8/8/8/8/4K3");
     }
 }

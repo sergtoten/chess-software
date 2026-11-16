@@ -1,5 +1,7 @@
 package tests.serviceTest;
 
+import java.util.Optional;
+import software.ulpgc.chess.application.domain.model.Piece;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -159,5 +161,55 @@ class MoveApplierTest {
     void blackLongCastlingMovesTheRook() {
         assertThat(apply("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1", "e8", "c8"))
                 .isEqualTo("2kr3r/8/8/8/8/8/8/R3K2R w KQ - 1 2");
+    }
+
+    // ---------- Promoción ----------
+
+    private String applyPromoting(String fen, String from, String to, Piece piece) {
+        Position result = applier.applyMove(deserializer.deserialize(fen),
+                new Move(Square.at(from), Square.at(to)), Optional.of(piece));
+        return serializer.serialize(result);
+    }
+
+    @Test
+    @DisplayName("Un peón blanco que llega a la última fila se convierte en la pieza elegida")
+    void whitePawnPromotesToQueen() {
+        assertThat(applyPromoting("7k/4P3/8/8/8/8/8/4K3 w - - 3 5", "e7", "e8", Piece.WhiteQueen))
+                .isEqualTo("4Q2k/8/8/8/8/8/8/4K3 b - - 0 5");
+    }
+
+    @Test
+    @DisplayName("Se puede promocionar a una pieza menor, por ejemplo un caballo")
+    void whitePawnPromotesToKnight() {
+        assertThat(applyPromoting("7k/4P3/8/8/8/8/8/4K3 w - - 3 5", "e7", "e8", Piece.WhiteKnight))
+                .isEqualTo("4N2k/8/8/8/8/8/8/4K3 b - - 0 5");
+    }
+
+    @Test
+    @DisplayName("Un peón negro que llega a la primera fila se convierte en la pieza elegida")
+    void blackPawnPromotesToRook() {
+        assertThat(applyPromoting("4k3/8/8/8/8/8/4p3/K7 b - - 0 1", "e2", "e1", Piece.BlackRook))
+                .isEqualTo("4k3/8/8/8/8/8/8/K3r3 w - - 0 2");
+    }
+
+    @Test
+    @DisplayName("Se puede promocionar capturando una pieza")
+    void promotionWithCapture() {
+        assertThat(applyPromoting("2r4k/3P4/8/8/8/8/8/4K3 w - - 0 1", "d7", "c8", Piece.WhiteQueen))
+                .isEqualTo("2Q4k/8/8/8/8/8/8/4K3 b - - 0 1");
+    }
+
+    @Test
+    @DisplayName("Promocionar capturando una torre en su esquina le quita el derecho de enroque")
+    void promotionCapturingCornerRookRemovesRight() {
+        assertThat(applyPromoting("r3k3/1P6/8/8/8/8/8/4K3 w q - 0 1", "b7", "a8", Piece.WhiteQueen))
+                .isEqualTo("Q3k3/8/8/8/8/8/8/4K3 b - - 0 1");
+    }
+
+    @Test
+    @DisplayName("Si el movimiento no es una promoción, la pieza indicada se ignora")
+    void pieceIsIgnoredWhenThereIsNoPromotion() {
+        assertThat(applyPromoting("7k/8/4P3/8/8/8/8/4K3 w - - 0 1", "e6", "e7", Piece.WhiteQueen))
+                .isEqualTo("7k/4P3/8/8/8/8/8/4K3 b - - 0 1");
     }
 }

@@ -16,12 +16,36 @@ public class MoveApplier {
         this.gameRules = gameRules;
     }
     public Position applyMove(Position position, Move move) {
+        return applyMove(position, move, Optional.empty());
+    }
+
+    public Position applyMove(Position position, Move move, Optional<Piece> promotion) {
         Color colorTurn = position.state().turn();
         Board actualBoard = position.board();
-        List<Move> legalMoves = gameRules.legalMoves(position.board(), colorTurn, position.state());
+        List<Move> legalMoves = gameRules.legalMoves(actualBoard, colorTurn, position.state());
         if (!legalMoves.contains(move)) throw new IllegalMoveException("Movimiento ilegal");
         State state = updateState(actualBoard, position, colorTurn, move);
-        return new Position(position.board().move(move.from(), move.to()), state);
+        Board movedBoard = actualBoard.move(move.from(), move.to());
+        Board finalBoard = applyPromotion(actualBoard, movedBoard, move, colorTurn, promotion);
+        return new Position(finalBoard, state);
+    }
+
+    private Board applyPromotion(Board actualBoard, Board movedBoard, Move move, Color turn, Optional<Piece> promotion) {
+        Piece sourcePiece = actualBoard.pieceAt(move.from());
+        if (!isPromotion(sourcePiece, move.to())) return movedBoard;
+        Piece piece = promotion
+                .filter(chosen -> isValidPromotion(chosen, turn))
+                .orElseThrow(() -> new IllegalMoveException("Promoción inválida"));
+        return movedBoard.promote(move.to(), piece);
+    }
+
+    private boolean isPromotion(Piece piece, Square to) {
+        Rank lastRank = piece.isWhite() ? Rank.R8 : Rank.R1;
+        return piece.isPawn() && to.rank() == lastRank;
+    }
+
+    private boolean isValidPromotion(Piece piece, Color turn) {
+        return piece.color() == turn && !piece.isPawn() && !piece.isKing();
     }
     private State updateState(Board actualBoard, Position position, Color turn, Move move) {
         int fullMoveNumber = position.state().fullMoveNumber();
