@@ -58,7 +58,7 @@ class GameRulesTest {
 
     private List<Move> legalMovesOf(String fullFen) {
         Position position = positionDeserializer.deserialize(fullFen);
-        return rules.legalMoves(position.board(), position.state().turn(), position.state());
+        return rules.legalMoves(position.board(), position.turn(), position.state());
     }
 
     private List<Move> legalMovesFrom(String fen, Color color, String square) {

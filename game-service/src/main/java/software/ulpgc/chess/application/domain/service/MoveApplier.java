@@ -21,7 +21,7 @@ public class MoveApplier {
     }
 
     public Position applyMove(Position position, Move move, Optional<Piece> promotion) {
-        Color colorTurn = position.state().turn();
+        Color colorTurn = position.turn();
         Board actualBoard = position.board();
         List<Move> legalMoves = gameRules.legalMoves(actualBoard, colorTurn, position.state());
         if (!legalMoves.contains(move)) throw new IllegalMoveException("Movimiento ilegal");
