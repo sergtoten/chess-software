@@ -9,6 +9,8 @@
         <option value="$PROJECT_DIR$/login-store/pom.xml" />
         <option value="$PROJECT_DIR$/fronted/pom.xml" />
         <option value="$PROJECT_DIR$/backend/pom.xml" />
+        <option value="$PROJECT_DIR$/../game-service/pom.xml" />
+        <option value="$PROJECT_DIR$/game-service/pom.xml" />
       </list>
     </option>
   </component>
