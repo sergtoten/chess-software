@@ -16,8 +16,10 @@ public class FileGameStore implements GameStore {
 
     @Override
     public String load(String id) {
+        File file = toFile(id);
+        if (!file.exists()) return null;
         try {
-            byte[] data = Files.readAllBytes(toFile(id).toPath());
+            byte[] data = Files.readAllBytes(file.toPath());
             return new String(data);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -27,7 +29,9 @@ public class FileGameStore implements GameStore {
     @Override
     public void save(String id, String game) {
         try {
-            Files.write(toFile(id).toPath(), game.getBytes());
+            File file = toFile(id);                                   
+            Files.createDirectories(file.getParentFile().toPath());
+            Files.write(file.toPath(), game.getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
