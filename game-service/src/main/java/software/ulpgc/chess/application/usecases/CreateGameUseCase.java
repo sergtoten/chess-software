@@ -7,17 +7,21 @@ import software.ulpgc.chess.application.ports.Clock;
 import software.ulpgc.chess.application.ports.CodeGenerator;
 import software.ulpgc.chess.application.ports.ColorPicker;
 import software.ulpgc.chess.application.ports.persistence.GameStore;
+import software.ulpgc.chess.application.ports.serializer.GameSerializer;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public class CreateGameUseCase implements UseCase {
     private final GameStore store;
+    private final GameSerializer serializer;
     private final Clock clock;
     private final ColorPicker colorPicker;
     private final CodeGenerator codeGenerator;
-    public CreateGameUseCase(GameStore store, Clock clock, ColorPicker colorPicker, CodeGenerator codeGenerator) {
+
+    public CreateGameUseCase(GameStore store, GameSerializer serializer, Clock clock, ColorPicker colorPicker, CodeGenerator codeGenerator) {
         this.store = store;
+        this.serializer = serializer;
         this.clock = clock;
         this.colorPicker = colorPicker;
         this.codeGenerator = codeGenerator;
@@ -38,7 +42,7 @@ public class CreateGameUseCase implements UseCase {
             };
         }
         Game game = Game.start(id, roomCode, creator.get(), colorPicker.pick(), clock.now());
-        store.save(id, "");
+        store.save(id, serializer.serialize(game));
         return new Output() {
             @Override
             public int status() {

@@ -9,9 +9,13 @@ import software.ulpgc.chess.application.usecases.RetrieveGameUseCase;
 import software.ulpgc.chess.application.usecases.UpdateGameUseCase;
 import software.ulpgc.chess.infrastructure.adapters.JavalinContextInput;
 import software.ulpgc.chess.infrastructure.adapters.RandomColorPicker;
-import software.ulpgc.chess.infrastructure.adapters.RamdonRoomCodeGenerator;
+import software.ulpgc.chess.infrastructure.adapters.RandomRoomCodeGenerator;
 import software.ulpgc.chess.infrastructure.adapters.SystemClock;
 import software.ulpgc.chess.infrastructure.adapters.persistence.FileGameStore;
+import software.ulpgc.chess.infrastructure.adapters.serializer.FenBoardSerializer;
+import software.ulpgc.chess.infrastructure.adapters.serializer.FenPositionSerializer;
+import software.ulpgc.chess.infrastructure.adapters.serializer.FenStateSerializer;
+import software.ulpgc.chess.infrastructure.adapters.serializer.GameJsonSerializer;
 
 import java.io.File;
 
@@ -25,7 +29,9 @@ public class Main {
         config.routes.get("/", c->execute(c, new RetrieveGameUseCase(new FileGameStore(new File("games")))));
         config.routes.put("/", c->execute(c, new UpdateGameUseCase()));
         config.routes.post("/", c -> execute(c, new CreateGameUseCase(
-                new FileGameStore(new File("games")), new SystemClock(), new RandomColorPicker(), new RamdonRoomCodeGenerator())));
+                new FileGameStore(new File("games")),
+                new GameJsonSerializer(new FenPositionSerializer(new FenBoardSerializer(), new FenStateSerializer())),
+                new SystemClock(), new RandomColorPicker(), new RandomRoomCodeGenerator())));
     }
 
     private static void execute(Context context, UseCase operation) {

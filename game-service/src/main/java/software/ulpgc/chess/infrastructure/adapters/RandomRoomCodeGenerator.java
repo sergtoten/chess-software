@@ -4,7 +4,7 @@ import software.ulpgc.chess.application.ports.CodeGenerator;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class RamdonRoomCodeGenerator implements CodeGenerator {
+public class RandomRoomCodeGenerator implements CodeGenerator {
 
     static final String ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     static final int LENGTH = 6;
