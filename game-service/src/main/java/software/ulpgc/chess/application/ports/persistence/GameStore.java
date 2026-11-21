@@ -1,4 +1,4 @@
-package software.ulpgc.chess.application.ports;
+package software.ulpgc.chess.application.ports.persistence;
 
 public interface GameStore {
     String load(String id);

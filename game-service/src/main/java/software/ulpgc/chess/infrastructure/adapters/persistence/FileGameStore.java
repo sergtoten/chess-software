@@ -1,6 +1,6 @@
 package software.ulpgc.chess.infrastructure.adapters.persistence;
 
-import software.ulpgc.chess.application.ports.GameStore;
+import software.ulpgc.chess.application.ports.persistence.GameStore;
 
 import java.io.File;
 import java.io.IOException;

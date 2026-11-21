@@ -1,7 +1,7 @@
 package software.ulpgc.chess.application.usecases;
 
 import software.ulpgc.chess.application.UseCase;
-import software.ulpgc.chess.application.ports.GameStore;
+import software.ulpgc.chess.application.ports.persistence.GameStore;
 
 import java.util.UUID;
 
