@@ -13,6 +13,7 @@ public class JavalinContextInput implements UseCase.Input {
 
     @Override
     public String get(String key) {
-        return "";
+        String value = context.queryParam(key);
+        return value != null ? value : context.formParam(key);
     }
 }

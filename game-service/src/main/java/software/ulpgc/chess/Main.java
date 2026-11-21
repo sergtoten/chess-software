@@ -8,6 +8,9 @@ import software.ulpgc.chess.application.usecases.CreateGameUseCase;
 import software.ulpgc.chess.application.usecases.RetrieveGameUseCase;
 import software.ulpgc.chess.application.usecases.UpdateGameUseCase;
 import software.ulpgc.chess.infrastructure.adapters.JavalinContextInput;
+import software.ulpgc.chess.infrastructure.adapters.RandomColorPicker;
+import software.ulpgc.chess.infrastructure.adapters.RamdonRoomCodeGenerator;
+import software.ulpgc.chess.infrastructure.adapters.SystemClock;
 import software.ulpgc.chess.infrastructure.adapters.persistence.FileGameStore;
 
 import java.io.File;
@@ -21,7 +24,8 @@ public class Main {
     private static void init(JavalinConfig config) {
         config.routes.get("/", c->execute(c, new RetrieveGameUseCase(new FileGameStore(new File("games")))));
         config.routes.put("/", c->execute(c, new UpdateGameUseCase()));
-        // config.routes.post("/", c->execute(c, new CreateGameUseCase()));
+        config.routes.post("/", c -> execute(c, new CreateGameUseCase(
+                new FileGameStore(new File("games")), new SystemClock(), new RandomColorPicker(), new RamdonRoomCodeGenerator())));
     }
 
     private static void execute(Context context, UseCase operation) {

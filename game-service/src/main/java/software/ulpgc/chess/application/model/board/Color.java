@@ -1,7 +1,5 @@
 package software.ulpgc.chess.application.model.board;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 public enum Color {
 
     White('w'), Black('b');
