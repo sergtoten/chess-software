@@ -18,7 +18,6 @@ public class CreateGameUseCase implements UseCase {
     private final Clock clock;
     private final ColorPicker colorPicker;
     private final CodeGenerator codeGenerator;
-
     public CreateGameUseCase(GameStore store, GameSerializer serializer, Clock clock, ColorPicker colorPicker, CodeGenerator codeGenerator) {
         this.store = store;
         this.serializer = serializer;
@@ -26,7 +25,6 @@ public class CreateGameUseCase implements UseCase {
         this.colorPicker = colorPicker;
         this.codeGenerator = codeGenerator;
     }
-
     @Override
     public Output execute(Input input) {
         String id = UUID.randomUUID().toString();
