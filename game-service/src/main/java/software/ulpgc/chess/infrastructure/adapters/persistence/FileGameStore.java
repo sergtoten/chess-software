@@ -5,6 +5,7 @@ import software.ulpgc.chess.application.ports.persistence.GameStore;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Optional;
 
 public class FileGameStore implements GameStore {
     private final File root;
@@ -15,12 +16,12 @@ public class FileGameStore implements GameStore {
 
 
     @Override
-    public String load(String id) {
+    public Optional<String> load(String id) {
         File file = toFile(id);
-        if (!file.exists()) return null;
+        if (!file.exists()) return Optional.empty();
         try {
             byte[] data = Files.readAllBytes(file.toPath());
-            return new String(data);
+            return Optional.of(new String(data));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

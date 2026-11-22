@@ -5,13 +5,19 @@ import io.javalin.config.JavalinConfig;
 import io.javalin.http.Context;
 import software.ulpgc.chess.application.UseCase;
 import software.ulpgc.chess.application.usecases.CreateGameUseCase;
+import software.ulpgc.chess.application.usecases.JoinGameUseCase;
 import software.ulpgc.chess.application.usecases.RetrieveGameUseCase;
 import software.ulpgc.chess.application.usecases.UpdateGameUseCase;
 import software.ulpgc.chess.infrastructure.adapters.JavalinContextInput;
 import software.ulpgc.chess.infrastructure.adapters.RandomColorPicker;
 import software.ulpgc.chess.infrastructure.adapters.RandomRoomCodeGenerator;
 import software.ulpgc.chess.infrastructure.adapters.SystemClock;
+import software.ulpgc.chess.infrastructure.adapters.deserializer.FenBoardDeserializer;
+import software.ulpgc.chess.infrastructure.adapters.deserializer.FenPositionDeserializer;
+import software.ulpgc.chess.infrastructure.adapters.deserializer.FenStateDeserializer;
+import software.ulpgc.chess.infrastructure.adapters.deserializer.GameJsonDeserializer;
 import software.ulpgc.chess.infrastructure.adapters.persistence.FileGameStore;
+import software.ulpgc.chess.infrastructure.adapters.persistence.FileRoomIndex;
 import software.ulpgc.chess.infrastructure.adapters.serializer.FenBoardSerializer;
 import software.ulpgc.chess.infrastructure.adapters.serializer.FenPositionSerializer;
 import software.ulpgc.chess.infrastructure.adapters.serializer.FenStateSerializer;
@@ -30,8 +36,15 @@ public class Main {
         config.routes.put("/", c->execute(c, new UpdateGameUseCase()));
         config.routes.post("/", c -> execute(c, new CreateGameUseCase(
                 new FileGameStore(new File("games")),
+                new FileRoomIndex(new File("games")),
                 new GameJsonSerializer(new FenPositionSerializer(new FenBoardSerializer(), new FenStateSerializer())),
                 new SystemClock(), new RandomColorPicker(), new RandomRoomCodeGenerator())));
+        config.routes.put("/join", c -> execute(c, new JoinGameUseCase(
+                new FileGameStore(new File("games")),
+                new SystemClock(),
+                new FileRoomIndex(new File("games")),
+                new GameJsonDeserializer(new FenPositionDeserializer(new FenBoardDeserializer(), new FenStateDeserializer())),
+                new GameJsonSerializer(new FenPositionSerializer(new FenBoardSerializer(), new FenStateSerializer())))));
     }
 
     private static void execute(Context context, UseCase operation) {
