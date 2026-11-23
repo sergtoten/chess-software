@@ -4,6 +4,11 @@ import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
 import io.javalin.http.Context;
 import software.ulpgc.chess.application.UseCase;
+import software.ulpgc.chess.application.domain.service.CastlingMoveGenerator;
+import software.ulpgc.chess.application.domain.service.GameRules;
+import software.ulpgc.chess.application.domain.service.MoveApplier;
+import software.ulpgc.chess.application.domain.service.MoveGenerate;
+import software.ulpgc.chess.application.domain.service.PawnMoveGenerate;
 import software.ulpgc.chess.application.ports.Clock;
 import software.ulpgc.chess.application.ports.deserializer.GameDeserializer;
 import software.ulpgc.chess.application.ports.persistence.GameStore;
@@ -42,9 +47,11 @@ public class Main {
         GameSerializer serializer = new GameJsonSerializer(new FenPositionSerializer(new FenBoardSerializer(), new FenStateSerializer()));
         GameDeserializer deserializer = new GameJsonDeserializer(new FenPositionDeserializer(new FenBoardDeserializer(), new FenStateDeserializer()));
         Clock clock = new SystemClock();
+        GameRules rules = new GameRules(new MoveGenerate(new PawnMoveGenerate()), new CastlingMoveGenerator());
+        MoveApplier applier = new MoveApplier(rules);
 
         UseCase retrieve = new RetrieveGameUseCase(store);
-        UseCase update = new UpdateGameUseCase();
+        UseCase update = new UpdateGameUseCase(store, clock, deserializer, serializer, applier, rules);
         UseCase create = new CreateGameUseCase(store, index, serializer, clock, new RandomColorPicker(), new RandomRoomCodeGenerator());
         UseCase join = new JoinGameUseCase(store, clock, index, deserializer, serializer);
 

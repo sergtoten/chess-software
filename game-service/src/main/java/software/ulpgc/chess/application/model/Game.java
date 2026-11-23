@@ -42,6 +42,16 @@ public record Game(
         return new Game(id(), roomCode(), white(), black(), nextPosition, newMoves, newStatus, newResult, createdAt(), now);
     }
 
+    public Optional<Color> colorOf(String playerId) {
+        if (sits(white, playerId)) return Optional.of(Color.White);
+        if (sits(black, playerId)) return Optional.of(Color.Black);
+        return Optional.empty();
+    }
+
+    private static boolean sits(Optional<Player> seat, String playerId) {
+        return seat.map(player -> player.id().equals(playerId)).orElse(false);
+    }
+
     private static Optional<GameResult> resultOf(GameStatus status, Color turn) {
         return switch (status) {
             case Checkmate -> Optional.of(turn == Color.White ? GameResult.BlackWins : GameResult.WhiteWins);

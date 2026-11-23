@@ -41,18 +41,10 @@ public class JoinGameUseCase implements UseCase {
         if (stored.isEmpty()) return UseCaseOutput.error(404, "game not found");
         Game game = deserializer.deserialize(stored.get());
         if (game.status() != GameStatus.Waiting) return UseCaseOutput.error(409, "game is not waiting for a player");
-        if (isPlayerOf(game, guest.get())) return UseCaseOutput.error(409, "player is already in this game");
+        if (game.colorOf(guest.get().id()).isPresent()) return UseCaseOutput.error(409, "player is already in this game");
         Game joined = game.join(guest.get(), clock.now());
         String json = serializer.serialize(joined);
         store.save(joined.id(), json);
         return new UseCaseOutput(200, json.getBytes(StandardCharsets.UTF_8));
-    }
-
-    private static boolean isPlayerOf(Game game, Player player) {
-        return sameId(game.white(), player) || sameId(game.black(), player);
-    }
-
-    private static boolean sameId(Optional<Player> seat, Player player) {
-        return seat.map(p -> p.id().equals(player.id())).orElse(false);
     }
 }
