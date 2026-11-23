@@ -11,6 +11,7 @@ import software.ulpgc.chess.application.ports.persistence.GameStore;
 import software.ulpgc.chess.application.ports.persistence.RoomIndex;
 import software.ulpgc.chess.application.ports.serializer.GameSerializer;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,11 +36,11 @@ public class CreateGameUseCase implements UseCase {
         if (creator.isEmpty()) { return UseCaseOutput.error(400, "missing player or playerID");}
         String id = UUID.randomUUID().toString();
         String roomCode = codeGenerator.generateCode();
-        Color colorPlayer1 = colorPicker.pick();
-        Game game = Game.start(id, roomCode, creator.get(), colorPlayer1, clock.now());
+        Color creatorColor = colorPicker.pick();
+        Game game = Game.start(id, roomCode, creator.get(), creatorColor, clock.now());
         String gameSerial = serializer.serialize(game);
         store.save(id, gameSerial);
         index.saveRoom(roomCode, id);
-        return new UseCaseOutput(200, gameSerial.getBytes());
+        return new UseCaseOutput(200, gameSerial.getBytes(StandardCharsets.UTF_8));
     }
 }

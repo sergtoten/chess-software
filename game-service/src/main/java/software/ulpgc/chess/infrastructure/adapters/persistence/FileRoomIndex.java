@@ -27,7 +27,7 @@ public class FileRoomIndex implements RoomIndex {
     }
 
     @Override
-    public Optional<String> findRoom(String roomCode) {
+    public Optional<String> findGameId(String roomCode) {
         File file = toFile(roomCode);
         if (!file.exists()) return Optional.empty();
         try {

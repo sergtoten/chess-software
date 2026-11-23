@@ -42,7 +42,7 @@ public class GameJsonSerializer implements GameSerializer {
     }
 
     private PlayerJson player(Optional<Player> player) {
-        return player.map(p -> new PlayerJson(p.uuid(), p.name())).orElse(null);
+        return player.map(p -> new PlayerJson(p.id(), p.name())).orElse(null);
     }
 
     private List<String> moves(List<Move> moves) {

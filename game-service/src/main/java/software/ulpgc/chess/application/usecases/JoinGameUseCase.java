@@ -10,6 +10,7 @@ import software.ulpgc.chess.application.ports.persistence.GameStore;
 import software.ulpgc.chess.application.ports.persistence.RoomIndex;
 import software.ulpgc.chess.application.ports.serializer.GameSerializer;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 public class JoinGameUseCase implements UseCase {
@@ -34,7 +35,7 @@ public class JoinGameUseCase implements UseCase {
         if (guest.isEmpty()) return UseCaseOutput.error(400, "missing playerId or playerName");
         Optional<String> roomCode = RoomCodeReader.from(input);
         if (roomCode.isEmpty()) return UseCaseOutput.error(400, "missing or malformed roomCode");
-        Optional<String> id = index.findRoom(roomCode.get());
+        Optional<String> id = index.findGameId(roomCode.get());
         if (id.isEmpty()) return UseCaseOutput.error(404, "room not found");
         Optional<String> stored = store.load(id.get());
         if (stored.isEmpty()) return UseCaseOutput.error(404, "game not found");
@@ -44,7 +45,7 @@ public class JoinGameUseCase implements UseCase {
         Game joined = game.join(guest.get(), clock.now());
         String json = serializer.serialize(joined);
         store.save(joined.id(), json);
-        return new UseCaseOutput(200, json.getBytes());
+        return new UseCaseOutput(200, json.getBytes(StandardCharsets.UTF_8));
     }
 
     private static boolean isPlayerOf(Game game, Player player) {
@@ -52,6 +53,6 @@ public class JoinGameUseCase implements UseCase {
     }
 
     private static boolean sameId(Optional<Player> seat, Player player) {
-        return seat.map(p -> p.uuid().equals(player.uuid())).orElse(false);
+        return seat.map(p -> p.id().equals(player.id())).orElse(false);
     }
 }

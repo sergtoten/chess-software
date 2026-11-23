@@ -5,6 +5,6 @@ import java.util.Optional;
 public interface RoomIndex {
 
     void saveRoom(String roomCode, String id);
-    Optional<String> findRoom(String roomCode);
+    Optional<String> findGameId(String roomCode);
 
 }

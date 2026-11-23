@@ -4,6 +4,11 @@ import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
 import io.javalin.http.Context;
 import software.ulpgc.chess.application.UseCase;
+import software.ulpgc.chess.application.ports.Clock;
+import software.ulpgc.chess.application.ports.deserializer.GameDeserializer;
+import software.ulpgc.chess.application.ports.persistence.GameStore;
+import software.ulpgc.chess.application.ports.persistence.RoomIndex;
+import software.ulpgc.chess.application.ports.serializer.GameSerializer;
 import software.ulpgc.chess.application.usecases.CreateGameUseCase;
 import software.ulpgc.chess.application.usecases.JoinGameUseCase;
 import software.ulpgc.chess.application.usecases.RetrieveGameUseCase;
@@ -32,23 +37,26 @@ public class Main {
     }
 
     private static void init(JavalinConfig config) {
-        config.routes.get("/", c->execute(c, new RetrieveGameUseCase(new FileGameStore(new File("games")))));
-        config.routes.put("/", c->execute(c, new UpdateGameUseCase()));
-        config.routes.post("/", c -> execute(c, new CreateGameUseCase(
-                new FileGameStore(new File("games")),
-                new FileRoomIndex(new File("games")),
-                new GameJsonSerializer(new FenPositionSerializer(new FenBoardSerializer(), new FenStateSerializer())),
-                new SystemClock(), new RandomColorPicker(), new RandomRoomCodeGenerator())));
-        config.routes.put("/join", c -> execute(c, new JoinGameUseCase(
-                new FileGameStore(new File("games")),
-                new SystemClock(),
-                new FileRoomIndex(new File("games")),
-                new GameJsonDeserializer(new FenPositionDeserializer(new FenBoardDeserializer(), new FenStateDeserializer())),
-                new GameJsonSerializer(new FenPositionSerializer(new FenBoardSerializer(), new FenStateSerializer())))));
+        GameStore store = new FileGameStore(new File("games"));
+        RoomIndex index = new FileRoomIndex(new File("games/rooms"));
+        GameSerializer serializer = new GameJsonSerializer(new FenPositionSerializer(new FenBoardSerializer(), new FenStateSerializer()));
+        GameDeserializer deserializer = new GameJsonDeserializer(new FenPositionDeserializer(new FenBoardDeserializer(), new FenStateDeserializer()));
+        Clock clock = new SystemClock();
+
+        UseCase retrieve = new RetrieveGameUseCase(store);
+        UseCase update = new UpdateGameUseCase();
+        UseCase create = new CreateGameUseCase(store, index, serializer, clock, new RandomColorPicker(), new RandomRoomCodeGenerator());
+        UseCase join = new JoinGameUseCase(store, clock, index, deserializer, serializer);
+
+        config.routes.get("/", c -> execute(c, retrieve));
+        config.routes.put("/", c -> execute(c, update));
+        config.routes.post("/", c -> execute(c, create));
+        config.routes.put("/join", c -> execute(c, join));
     }
 
     private static void execute(Context context, UseCase operation) {
         UseCase.Output output = operation.execute(new JavalinContextInput(context));
+        context.contentType("application/json");
         context.result(output.result());
         context.status(output.status());
     }
