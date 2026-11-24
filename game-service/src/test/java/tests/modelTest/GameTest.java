@@ -157,4 +157,25 @@ class GameTest {
         assertThat(afterLastMove(AFTER_E4, GameStatus.Ongoing).result()).isEmpty();
         assertThat(afterLastMove(AFTER_E4, GameStatus.Check).result()).isEmpty();
     }
+
+    // ---------- resign ----------
+
+    private static final Instant RESIGNED = Instant.parse("2026-11-18T10:07:00Z");
+
+    @Test
+    @DisplayName("Si se rinden las blancas, ganan las negras")
+    void whiteResignsMeansBlackWins() {
+        Game game = playing().resign(Color.White, RESIGNED);
+        assertThat(game.status()).isEqualTo(GameStatus.Resigned);
+        assertThat(game.result()).contains(GameResult.BlackWins);
+        assertThat(game.lastActivity()).isEqualTo(RESIGNED);
+    }
+
+    @Test
+    @DisplayName("Si se rinden las negras, ganan las blancas")
+    void blackResignsMeansWhiteWins() {
+        Game game = playing().resign(Color.Black, RESIGNED);
+        assertThat(game.status()).isEqualTo(GameStatus.Resigned);
+        assertThat(game.result()).contains(GameResult.WhiteWins);
+    }
 }

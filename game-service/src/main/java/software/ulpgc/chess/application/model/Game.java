@@ -42,6 +42,11 @@ public record Game(
         return new Game(id(), roomCode(), white(), black(), nextPosition, newMoves, newStatus, newResult, createdAt(), now);
     }
 
+    public Game resign(Color loser, Instant now) {
+        Optional<GameResult> finalResult = resultOf(GameStatus.Resigned, loser);
+        return new Game(id(), roomCode(), white(), black(), position(), moves(), GameStatus.Resigned, finalResult, createdAt(), now);
+    }
+
     public Optional<Color> colorOf(String playerId) {
         if (sits(white, playerId)) return Optional.of(Color.White);
         if (sits(black, playerId)) return Optional.of(Color.Black);
@@ -52,9 +57,9 @@ public record Game(
         return seat.map(player -> player.id().equals(playerId)).orElse(false);
     }
 
-    private static Optional<GameResult> resultOf(GameStatus status, Color turn) {
+    private static Optional<GameResult> resultOf(GameStatus status, Color loser) {
         return switch (status) {
-            case Checkmate -> Optional.of(turn == Color.White ? GameResult.BlackWins : GameResult.WhiteWins);
+            case Resigned, Checkmate -> Optional.of(loser == Color.White ? GameResult.BlackWins : GameResult.WhiteWins);
             case Stalemate -> Optional.of(GameResult.Draw);
             default -> Optional.empty();
         };

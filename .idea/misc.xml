@@ -17,6 +17,7 @@
         <option value="$PROJECT_DIR$/login-service/pom.xml" />
         <option value="$PROJECT_DIR$/player-service/pom.xml" />
         <option value="$PROJECT_DIR$/register-service/pom.xml" />
+        <option value="$PROJECT_DIR$/analytics-service/pom.xml" />
       </list>
     </option>
   </component>
