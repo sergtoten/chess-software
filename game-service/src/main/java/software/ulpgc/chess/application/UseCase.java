@@ -5,7 +5,6 @@ public interface UseCase {
     Output execute(Input input);
 
     interface Input {
-
         String get(String key);
     }
 

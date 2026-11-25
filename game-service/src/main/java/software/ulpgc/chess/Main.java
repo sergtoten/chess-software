@@ -14,10 +14,7 @@ import software.ulpgc.chess.application.ports.deserializer.GameDeserializer;
 import software.ulpgc.chess.application.ports.persistence.GameStore;
 import software.ulpgc.chess.application.ports.persistence.RoomIndex;
 import software.ulpgc.chess.application.ports.serializer.GameSerializer;
-import software.ulpgc.chess.application.usecases.CreateGameUseCase;
-import software.ulpgc.chess.application.usecases.JoinGameUseCase;
-import software.ulpgc.chess.application.usecases.RetrieveGameUseCase;
-import software.ulpgc.chess.application.usecases.UpdateGameUseCase;
+import software.ulpgc.chess.application.usecases.*;
 import software.ulpgc.chess.infrastructure.adapters.JavalinContextInput;
 import software.ulpgc.chess.infrastructure.adapters.RandomColorPicker;
 import software.ulpgc.chess.infrastructure.adapters.RandomRoomCodeGenerator;
@@ -54,11 +51,13 @@ public class Main {
         UseCase update = new UpdateGameUseCase(store, clock, deserializer, serializer, applier, rules);
         UseCase create = new CreateGameUseCase(store, index, serializer, clock, new RandomColorPicker(), new RandomRoomCodeGenerator());
         UseCase join = new JoinGameUseCase(store, clock, index, deserializer, serializer);
+        UseCase resign = new ResignGameUseCase(store, clock, deserializer, serializer);
 
         config.routes.get("/", c -> execute(c, retrieve));
         config.routes.put("/", c -> execute(c, update));
         config.routes.post("/", c -> execute(c, create));
         config.routes.put("/join", c -> execute(c, join));
+        config.routes.put("/resign", c -> execute(c, resign));
     }
 
     private static void execute(Context context, UseCase operation) {
