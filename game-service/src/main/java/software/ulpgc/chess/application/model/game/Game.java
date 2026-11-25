@@ -1,6 +1,9 @@
-package software.ulpgc.chess.application.model;
+package software.ulpgc.chess.application.model.game;
 
 import software.ulpgc.chess.application.model.board.Color;
+import software.ulpgc.chess.application.model.board.Piece;
+import software.ulpgc.chess.application.model.position.Move;
+import software.ulpgc.chess.application.model.position.Position;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -13,7 +16,7 @@ public record Game(
         Optional<Player> white,
         Optional<Player> black,
         Position position,
-        List<Move> moves,
+        List<PlayedMove> moves,
         GameStatus status,
         Optional<GameResult> result,
         Instant createdAt,
@@ -35,9 +38,9 @@ public record Game(
         return new Game(id(), roomCode(), white, black, position(), moves(), GameStatus.Ongoing, result(), createdAt(), now);
     }
 
-    public Game withMove(Move move, Position nextPosition, GameStatus newStatus, Instant now) {
-        List<Move> newMoves = new ArrayList<>(moves);
-        newMoves.add(move);
+    public Game withMove(Move move, Position nextPosition, GameStatus newStatus, Instant now, Optional<Piece> promotion) {
+        List<PlayedMove> newMoves = new ArrayList<>(moves);
+        newMoves.add(new PlayedMove(move, promotion));
         Optional<GameResult> newResult = resultOf(newStatus, nextPosition.turn());
         return new Game(id(), roomCode(), white(), black(), nextPosition, newMoves, newStatus, newResult, createdAt(), now);
     }

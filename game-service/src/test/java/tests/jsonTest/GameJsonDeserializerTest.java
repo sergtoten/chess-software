@@ -2,10 +2,13 @@ package tests.jsonTest;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import software.ulpgc.chess.application.model.Game;
-import software.ulpgc.chess.application.model.Move;
-import software.ulpgc.chess.application.model.Player;
+import software.ulpgc.chess.application.model.game.Game;
+import software.ulpgc.chess.application.model.position.Move;
+import software.ulpgc.chess.application.model.game.PlayedMove;
+import software.ulpgc.chess.application.model.game.Player;
 import software.ulpgc.chess.application.model.board.Square;
+
+import java.util.Optional;
 import software.ulpgc.chess.infrastructure.adapters.deserializer.FenBoardDeserializer;
 import software.ulpgc.chess.infrastructure.adapters.deserializer.FenPositionDeserializer;
 import software.ulpgc.chess.infrastructure.adapters.deserializer.FenStateDeserializer;
@@ -50,6 +53,6 @@ class GameJsonDeserializerTest {
 
         Game game = deserializer.deserialize(json);
 
-        assertThat(game.moves()).containsExactly(new Move(Square.at("e7"), Square.at("e8")));
+        assertThat(game.moves()).containsExactly(new PlayedMove(new Move(Square.at("e7"), Square.at("e8")), Optional.empty()));
     }
 }

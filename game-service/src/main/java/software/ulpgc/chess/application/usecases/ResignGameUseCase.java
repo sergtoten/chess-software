@@ -1,16 +1,15 @@
 package software.ulpgc.chess.application.usecases;
 
 import software.ulpgc.chess.application.UseCase;
-import software.ulpgc.chess.application.model.Game;
-import software.ulpgc.chess.application.model.GameStatus;
-import software.ulpgc.chess.application.model.Player;
+import software.ulpgc.chess.application.model.game.Game;
+import software.ulpgc.chess.application.model.game.GameStatus;
+import software.ulpgc.chess.application.model.game.Player;
 import software.ulpgc.chess.application.model.board.Color;
 import software.ulpgc.chess.application.ports.Clock;
 import software.ulpgc.chess.application.ports.deserializer.GameDeserializer;
 import software.ulpgc.chess.application.ports.persistence.GameStore;
 import software.ulpgc.chess.application.ports.serializer.GameSerializer;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 public class ResignGameUseCase implements UseCase {
@@ -38,10 +37,7 @@ public class ResignGameUseCase implements UseCase {
         if (!isInProgress(game.status())) return UseCaseOutput.error(409, "game is not in progress");
         Optional<Color> loser = game.colorOf(player.get().id());
         if (loser.isEmpty()) return UseCaseOutput.error(403, "not a player of this game");
-        Game resigned = game.resign(loser.get(), clock.now());
-        String json = serializer.serialize(resigned);
-        store.save(resigned.id(), json);
-        return new UseCaseOutput(200, json.getBytes(StandardCharsets.UTF_8));
+        return GameSaver.saveAndRespond(store, serializer, game.resign(loser.get(), clock.now()));
     }
 
     private static boolean isInProgress(GameStatus status) {

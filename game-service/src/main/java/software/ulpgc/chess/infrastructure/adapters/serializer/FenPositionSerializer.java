@@ -1,6 +1,6 @@
 package software.ulpgc.chess.infrastructure.adapters.serializer;
 
-import software.ulpgc.chess.application.model.Position;
+import software.ulpgc.chess.application.model.position.Position;
 import software.ulpgc.chess.application.ports.serializer.BoardSerializer;
 import software.ulpgc.chess.application.ports.serializer.PositionSerializer;
 import software.ulpgc.chess.application.ports.serializer.StateSerializer;

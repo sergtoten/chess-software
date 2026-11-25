@@ -3,10 +3,10 @@ package tests.fenSerializerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import software.ulpgc.chess.application.model.CastlingRight;
+import software.ulpgc.chess.application.model.position.CastlingRight;
 import software.ulpgc.chess.application.model.board.Color;
 import software.ulpgc.chess.application.model.board.Square;
-import software.ulpgc.chess.application.model.State;
+import software.ulpgc.chess.application.model.position.State;
 import software.ulpgc.chess.infrastructure.adapters.deserializer.FenStateDeserializer;
 import software.ulpgc.chess.infrastructure.adapters.serializer.FenStateSerializer;
 

@@ -1,8 +1,11 @@
 package software.ulpgc.chess.application.domain.service;
 
 import software.ulpgc.chess.application.domain.IllegalMoveException;
-import software.ulpgc.chess.application.model.*;
 import software.ulpgc.chess.application.model.board.*;
+import software.ulpgc.chess.application.model.position.CastlingRight;
+import software.ulpgc.chess.application.model.position.Move;
+import software.ulpgc.chess.application.model.position.Position;
+import software.ulpgc.chess.application.model.position.State;
 
 import java.util.EnumSet;
 import java.util.List;

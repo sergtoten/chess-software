@@ -1,12 +1,12 @@
 package software.ulpgc.chess.infrastructure.adapters.deserializer;
 
 import com.google.gson.Gson;
-import software.ulpgc.chess.application.model.Game;
-import software.ulpgc.chess.application.model.GameResult;
-import software.ulpgc.chess.application.model.GameStatus;
-import software.ulpgc.chess.application.model.Move;
-import software.ulpgc.chess.application.model.Player;
+import software.ulpgc.chess.application.model.board.Color;
+import software.ulpgc.chess.application.model.board.Piece;
+import software.ulpgc.chess.application.model.board.Rank;
 import software.ulpgc.chess.application.model.board.Square;
+import software.ulpgc.chess.application.model.game.*;
+import software.ulpgc.chess.application.model.position.Move;
 import software.ulpgc.chess.application.ports.deserializer.GameDeserializer;
 import software.ulpgc.chess.application.ports.deserializer.PositionDeserializer;
 import software.ulpgc.chess.infrastructure.adapters.dto.GameJson;
@@ -14,11 +14,19 @@ import software.ulpgc.chess.infrastructure.adapters.dto.PlayerJson;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class GameJsonDeserializer implements GameDeserializer {
     private final PositionDeserializer positionDeserializer;
     private final Gson gson = new Gson();
+
+    private static final Map<Character, String> PROMOTION_KINDS = Map.of(
+            'q', "Queen",
+            'r', "Rook",
+            'b', "Bishop",
+            'n', "Knight");
+
 
     public GameJsonDeserializer(PositionDeserializer positionDeserializer) {
         this.positionDeserializer = positionDeserializer;
@@ -48,8 +56,19 @@ public class GameJsonDeserializer implements GameDeserializer {
         return Optional.ofNullable(player).map(p -> new Player(p.id(), p.name()));
     }
 
-    private List<Move> moves(List<String> moves) {
-        return moves.stream().map(this::move).toList();
+    private List<PlayedMove> moves(List<String> moves) {
+        return moves.stream().map(this::playedMove).toList();
+    }
+
+    private PlayedMove playedMove(String move) {
+        return new PlayedMove(move(move), promotion(move));
+    }
+
+    private Optional<Piece> promotion(String move) {
+        if (move.length() == 4) return Optional.empty();
+        Square to = Square.at(move.substring(2, 4));
+        Color color = to.rank() == Rank.R8 ? Color.White : Color.Black;
+        return Optional.of(Piece.valueOf(color.name() + PROMOTION_KINDS.get(move.charAt(4))));
     }
 
     private Move move(String move) {

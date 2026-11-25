@@ -1,7 +1,4 @@
-package software.ulpgc.chess.application.model;
-
-import software.ulpgc.chess.application.model.board.Piece;
-import software.ulpgc.chess.application.model.board.Square;
+package software.ulpgc.chess.application.model.board;
 
 import java.util.HashMap;
 import java.util.Map;

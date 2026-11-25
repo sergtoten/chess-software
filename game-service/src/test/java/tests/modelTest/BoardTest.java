@@ -4,7 +4,7 @@ import software.ulpgc.chess.application.model.board.Piece;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import software.ulpgc.chess.application.model.Board;
+import software.ulpgc.chess.application.model.board.Board;
 import software.ulpgc.chess.application.model.board.Square;
 import software.ulpgc.chess.infrastructure.adapters.deserializer.FenBoardDeserializer;
 import software.ulpgc.chess.infrastructure.adapters.serializer.FenBoardSerializer;

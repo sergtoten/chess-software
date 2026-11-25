@@ -1,4 +1,4 @@
-package software.ulpgc.chess.application.model;
+package software.ulpgc.chess.application.model.position;
 
 public enum CastlingRight {
 

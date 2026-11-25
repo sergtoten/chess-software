@@ -1,16 +1,15 @@
 package software.ulpgc.chess.application.usecases;
 
 import software.ulpgc.chess.application.UseCase;
-import software.ulpgc.chess.application.model.Game;
-import software.ulpgc.chess.application.model.GameStatus;
-import software.ulpgc.chess.application.model.Player;
+import software.ulpgc.chess.application.model.game.Game;
+import software.ulpgc.chess.application.model.game.GameStatus;
+import software.ulpgc.chess.application.model.game.Player;
 import software.ulpgc.chess.application.ports.Clock;
 import software.ulpgc.chess.application.ports.deserializer.GameDeserializer;
 import software.ulpgc.chess.application.ports.persistence.GameStore;
 import software.ulpgc.chess.application.ports.persistence.RoomIndex;
 import software.ulpgc.chess.application.ports.serializer.GameSerializer;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 public class JoinGameUseCase implements UseCase {
@@ -42,9 +41,6 @@ public class JoinGameUseCase implements UseCase {
         Game game = deserializer.deserialize(stored.get());
         if (game.status() != GameStatus.Waiting) return UseCaseOutput.error(409, "game is not waiting for a player");
         if (game.colorOf(guest.get().id()).isPresent()) return UseCaseOutput.error(409, "player is already in this game");
-        Game joined = game.join(guest.get(), clock.now());
-        String json = serializer.serialize(joined);
-        store.save(joined.id(), json);
-        return new UseCaseOutput(200, json.getBytes(StandardCharsets.UTF_8));
+        return GameSaver.saveAndRespond(store, serializer, game.join(guest.get(), clock.now()));
     }
 }

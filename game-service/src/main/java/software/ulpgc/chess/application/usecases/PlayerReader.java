@@ -1,7 +1,7 @@
 package software.ulpgc.chess.application.usecases;
 
 import software.ulpgc.chess.application.UseCase;
-import software.ulpgc.chess.application.model.Player;
+import software.ulpgc.chess.application.model.game.Player;
 
 import java.util.Optional;
 

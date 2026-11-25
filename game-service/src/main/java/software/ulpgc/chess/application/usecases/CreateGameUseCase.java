@@ -1,8 +1,8 @@
 package software.ulpgc.chess.application.usecases;
 
 import software.ulpgc.chess.application.UseCase;
-import software.ulpgc.chess.application.model.Game;
-import software.ulpgc.chess.application.model.Player;
+import software.ulpgc.chess.application.model.game.Game;
+import software.ulpgc.chess.application.model.game.Player;
 import software.ulpgc.chess.application.model.board.Color;
 import software.ulpgc.chess.application.ports.Clock;
 import software.ulpgc.chess.application.ports.CodeGenerator;
@@ -11,7 +11,6 @@ import software.ulpgc.chess.application.ports.persistence.GameStore;
 import software.ulpgc.chess.application.ports.persistence.RoomIndex;
 import software.ulpgc.chess.application.ports.serializer.GameSerializer;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,14 +32,13 @@ public class CreateGameUseCase implements UseCase {
     @Override
     public Output execute(Input input) {
         Optional<Player> creator = PlayerReader.from(input);
-        if (creator.isEmpty()) { return UseCaseOutput.error(400, "missing player or playerID");}
+        if (creator.isEmpty()) { return UseCaseOutput.error(400, "missing player or playerName");}
         String id = UUID.randomUUID().toString();
         String roomCode = codeGenerator.generateCode();
         Color creatorColor = colorPicker.pick();
         Game game = Game.start(id, roomCode, creator.get(), creatorColor, clock.now());
-        String gameSerial = serializer.serialize(game);
-        store.save(id, gameSerial);
+        Output output = GameSaver.saveAndRespond(store, serializer, game);
         index.saveRoom(roomCode, id);
-        return new UseCaseOutput(200, gameSerial.getBytes(StandardCharsets.UTF_8));
+        return output;
     }
 }

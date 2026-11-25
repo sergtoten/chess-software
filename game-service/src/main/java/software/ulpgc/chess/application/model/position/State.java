@@ -1,4 +1,4 @@
-package software.ulpgc.chess.application.model;
+package software.ulpgc.chess.application.model.position;
 
 import software.ulpgc.chess.application.model.board.Color;
 import software.ulpgc.chess.application.model.board.Square;

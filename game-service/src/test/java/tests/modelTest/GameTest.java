@@ -2,12 +2,13 @@ package tests.modelTest;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import software.ulpgc.chess.application.model.Game;
-import software.ulpgc.chess.application.model.GameResult;
-import software.ulpgc.chess.application.model.GameStatus;
-import software.ulpgc.chess.application.model.Move;
-import software.ulpgc.chess.application.model.Player;
-import software.ulpgc.chess.application.model.Position;
+import software.ulpgc.chess.application.model.game.Game;
+import software.ulpgc.chess.application.model.game.GameResult;
+import software.ulpgc.chess.application.model.game.GameStatus;
+import software.ulpgc.chess.application.model.position.Move;
+import software.ulpgc.chess.application.model.game.PlayedMove;
+import software.ulpgc.chess.application.model.game.Player;
+import software.ulpgc.chess.application.model.position.Position;
 import software.ulpgc.chess.application.model.board.Color;
 import software.ulpgc.chess.application.model.board.Square;
 import software.ulpgc.chess.infrastructure.adapters.deserializer.FenBoardDeserializer;
@@ -15,6 +16,7 @@ import software.ulpgc.chess.infrastructure.adapters.deserializer.FenPositionDese
 import software.ulpgc.chess.infrastructure.adapters.deserializer.FenStateDeserializer;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -97,15 +99,19 @@ class GameTest {
         return new Move(Square.at(from), Square.at(to));
     }
 
+    private PlayedMove played(String from, String to) {
+        return new PlayedMove(move(from, to), Optional.empty());
+    }
+
     private Game afterLastMove(String fen, GameStatus status) {
-        return playing().withMove(move("a1", "a2"), this.fen.deserialize(fen), status, MOVED);
+        return playing().withMove(move("a1", "a2"), this.fen.deserialize(fen), status, MOVED, Optional.empty());
     }
 
     @Test
     @DisplayName("Un movimiento se añade al historial y actualiza posición, estado y última actividad")
     void moveIsRecorded() {
-        Game game = playing().withMove(move("e2", "e4"), fen.deserialize(AFTER_E4), GameStatus.Ongoing, MOVED);
-        assertThat(game.moves()).containsExactly(move("e2", "e4"));
+        Game game = playing().withMove(move("e2", "e4"), fen.deserialize(AFTER_E4), GameStatus.Ongoing, MOVED, Optional.empty());
+        assertThat(game.moves()).containsExactly(played("e2", "e4"));
         assertThat(game.position()).isEqualTo(fen.deserialize(AFTER_E4));
         assertThat(game.status()).isEqualTo(GameStatus.Ongoing);
         assertThat(game.lastActivity()).isEqualTo(MOVED);
@@ -116,7 +122,7 @@ class GameTest {
     @DisplayName("Mover no modifica la partida original")
     void moveDoesNotModifyOriginalGame() {
         Game before = playing();
-        before.withMove(move("e2", "e4"), fen.deserialize(AFTER_E4), GameStatus.Ongoing, MOVED);
+        before.withMove(move("e2", "e4"), fen.deserialize(AFTER_E4), GameStatus.Ongoing, MOVED, Optional.empty());
         assertThat(before.moves()).isEmpty();
         assertThat(before.position()).isEqualTo(Position.initial());
     }
@@ -125,9 +131,9 @@ class GameTest {
     @DisplayName("Los movimientos quedan en el historial en el orden en que se hicieron")
     void movesAreKeptInOrder() {
         Game game = playing()
-                .withMove(move("e2", "e4"), fen.deserialize(AFTER_E4), GameStatus.Ongoing, MOVED)
-                .withMove(move("e7", "e5"), fen.deserialize(AFTER_E5), GameStatus.Ongoing, MOVED);
-        assertThat(game.moves()).containsExactly(move("e2", "e4"), move("e7", "e5"));
+                .withMove(move("e2", "e4"), fen.deserialize(AFTER_E4), GameStatus.Ongoing, MOVED, Optional.empty())
+                .withMove(move("e7", "e5"), fen.deserialize(AFTER_E5), GameStatus.Ongoing, MOVED, Optional.empty());
+        assertThat(game.moves()).containsExactly(played("e2", "e4"), played("e7", "e5"));
     }
 
     @Test
@@ -177,5 +183,33 @@ class GameTest {
         Game game = playing().resign(Color.Black, RESIGNED);
         assertThat(game.status()).isEqualTo(GameStatus.Resigned);
         assertThat(game.result()).contains(GameResult.WhiteWins);
+    }
+
+    // ---------- colorOf ----------
+
+    @Test
+    @DisplayName("colorOf con el id del jugador de blancas devuelve White")
+    void colorOfWhitePlayer() {
+        assertThat(playing().colorOf(CREATOR.id())).contains(Color.White);
+    }
+
+    @Test
+    @DisplayName("colorOf con el id del jugador de negras devuelve Black")
+    void colorOfBlackPlayer() {
+        assertThat(playing().colorOf(GUEST.id())).contains(Color.Black);
+    }
+
+    @Test
+    @DisplayName("colorOf con un id que no juega la partida devuelve vacío")
+    void colorOfStranger() {
+        assertThat(playing().colorOf("uuid-stranger")).isEmpty();
+    }
+
+    @Test
+    @DisplayName("En espera de rival, colorOf de alguien que no está sentado devuelve vacío")
+    void colorOfWhileWaiting() {
+        Game game = start(Color.White);
+        assertThat(game.colorOf(GUEST.id())).isEmpty();
+        assertThat(game.colorOf(CREATOR.id())).contains(Color.White);
     }
 }

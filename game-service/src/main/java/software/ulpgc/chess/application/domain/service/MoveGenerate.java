@@ -1,7 +1,7 @@
 package software.ulpgc.chess.application.domain.service;
 
-import software.ulpgc.chess.application.model.Board;
-import software.ulpgc.chess.application.model.Move;
+import software.ulpgc.chess.application.model.board.Board;
+import software.ulpgc.chess.application.model.position.Move;
 import software.ulpgc.chess.application.model.board.Color;
 import software.ulpgc.chess.application.model.board.Piece;
 import software.ulpgc.chess.application.model.board.Square;
