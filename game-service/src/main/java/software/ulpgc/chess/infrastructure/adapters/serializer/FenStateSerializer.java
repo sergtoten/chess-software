@@ -1,9 +1,9 @@
 package software.ulpgc.chess.infrastructure.adapters.serializer;
 
-import software.ulpgc.chess.application.model.CastlingRight;
+import software.ulpgc.chess.application.model.position.CastlingRight;
 import software.ulpgc.chess.application.model.board.Color;
 import software.ulpgc.chess.application.model.board.Square;
-import software.ulpgc.chess.application.model.State;
+import software.ulpgc.chess.application.model.position.State;
 import software.ulpgc.chess.application.ports.serializer.StateSerializer;
 
 import java.util.Arrays;

@@ -1,6 +1,6 @@
 package software.ulpgc.chess.infrastructure.adapters.deserializer;
 
-import software.ulpgc.chess.application.model.Position;
+import software.ulpgc.chess.application.model.position.Position;
 import software.ulpgc.chess.application.ports.deserializer.BoardDeserializer;
 import software.ulpgc.chess.application.ports.deserializer.PositionDeserializer;
 import software.ulpgc.chess.application.ports.deserializer.StateDeserializer;

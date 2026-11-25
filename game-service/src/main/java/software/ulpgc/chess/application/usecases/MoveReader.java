@@ -1,7 +1,7 @@
 package software.ulpgc.chess.application.usecases;
 
 import software.ulpgc.chess.application.UseCase;
-import software.ulpgc.chess.application.model.Move;
+import software.ulpgc.chess.application.model.position.Move;
 import software.ulpgc.chess.application.model.board.Square;
 
 import java.util.Optional;
