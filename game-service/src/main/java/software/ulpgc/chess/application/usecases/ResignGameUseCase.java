@@ -30,7 +30,7 @@ public class ResignGameUseCase implements UseCase {
         Optional<String> id = GameIdReader.from(input);
         if (id.isEmpty()) return UseCaseOutput.error(400, "missing or malformed id");
         Optional<Player> player = PlayerReader.from(input);
-        if (player.isEmpty()) return UseCaseOutput.error(400, "missing playerId or playerName");
+        if (player.isEmpty()) return UseCaseOutput.error(400, "missing or malformed playerId or playerName");
         Optional<String> stored = store.load(id.get());
         if (stored.isEmpty()) return UseCaseOutput.error(404, "game not found");
         Game game = deserializer.deserialize(stored.get());

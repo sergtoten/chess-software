@@ -16,9 +16,9 @@ public class RetrieveGameUseCase implements UseCase {
     @Override
     public Output execute(Input input) {
         Optional<String> id = GameIdReader.from(input);
-        if (id.isEmpty()) return UseCaseOutput.error(400, "ID pattern is incorrect");
+        if (id.isEmpty()) return UseCaseOutput.error(400, "missing or malformed id");
         Optional<String> game = store.load(id.get());
-        if (game.isEmpty()) return UseCaseOutput.error(404, "Game not found");
+        if (game.isEmpty()) return UseCaseOutput.error(404, "game not found");
         return new UseCaseOutput(200, game.get().getBytes(StandardCharsets.UTF_8));
     }
 }

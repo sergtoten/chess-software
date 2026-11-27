@@ -32,7 +32,7 @@ public class CreateGameUseCase implements UseCase {
     @Override
     public Output execute(Input input) {
         Optional<Player> creator = PlayerReader.from(input);
-        if (creator.isEmpty()) { return UseCaseOutput.error(400, "missing player or playerName");}
+        if (creator.isEmpty()) return UseCaseOutput.error(400, "missing or malformed playerId or playerName");
         String id = UUID.randomUUID().toString();
         String roomCode = codeGenerator.generateCode();
         Color creatorColor = colorPicker.pick();

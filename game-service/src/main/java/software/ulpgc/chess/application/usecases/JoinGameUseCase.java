@@ -31,7 +31,7 @@ public class JoinGameUseCase implements UseCase {
     @Override
     public Output execute(Input input) {
         Optional<Player> guest = PlayerReader.from(input);
-        if (guest.isEmpty()) return UseCaseOutput.error(400, "missing playerId or playerName");
+        if (guest.isEmpty()) return UseCaseOutput.error(400, "missing or malformed playerId or playerName");
         Optional<String> roomCode = RoomCodeReader.from(input);
         if (roomCode.isEmpty()) return UseCaseOutput.error(400, "missing or malformed roomCode");
         Optional<String> id = index.findGameId(roomCode.get());

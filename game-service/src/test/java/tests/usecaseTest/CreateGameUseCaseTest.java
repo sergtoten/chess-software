@@ -63,6 +63,13 @@ class CreateGameUseCaseTest {
     }
 
     @Test
+    @DisplayName("playerName de 30 caracteres se acepta y de 31 devuelve 400")
+    void playerNameMaxLength() {
+        assertThat(execute(Map.of("playerId", "p1", "playerName", "a".repeat(30))).status()).isEqualTo(200);
+        assertThat(execute(Map.of("playerId", "p1", "playerName", "a".repeat(31))).status()).isEqualTo(400);
+    }
+
+    @Test
     @DisplayName("Con un jugador válido devuelve 200 y una partida en espera con el creador en su color")
     void createsWaitingGame() {
         UseCase.Output output = execute(Map.of("playerId", "p1", "playerName", "Ana"));

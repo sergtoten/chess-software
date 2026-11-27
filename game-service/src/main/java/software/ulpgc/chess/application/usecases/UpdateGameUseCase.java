@@ -42,7 +42,7 @@ public class UpdateGameUseCase implements UseCase {
         Optional<String> id = GameIdReader.from(input);
         if (id.isEmpty()) return UseCaseOutput.error(400, "missing or malformed id");
         Optional<Player> player = PlayerReader.from(input);
-        if (player.isEmpty()) return UseCaseOutput.error(400, "missing playerId or playerName");
+        if (player.isEmpty()) return UseCaseOutput.error(400, "missing or malformed playerId or playerName");
         Optional<MoveRequest> request = MoveReader.from(input);
         if (request.isEmpty()) return UseCaseOutput.error(400, "missing or malformed move or promotion");
         Optional<String> stored = store.load(id.get());
