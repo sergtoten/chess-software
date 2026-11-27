@@ -58,6 +58,10 @@ public class Main {
         config.routes.post("/", c -> execute(c, create));
         config.routes.put("/join", c -> execute(c, join));
         config.routes.put("/resign", c -> execute(c, resign));
+
+        String corsOrigin = System.getenv("CORS_ORIGIN");
+        if (corsOrigin != null)
+            config.bundledPlugins.enableCors(cors -> cors.addRule(rule -> rule.allowHost(corsOrigin)));
     }
 
     private static void execute(Context context, UseCase operation) {

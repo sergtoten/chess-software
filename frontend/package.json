@@ -1,0 +1,9 @@
+{
+  "name": "chess-frontend",
+  "private": true,
+  "type": "module",
+  "description": "Frontend web del sistema de salas de ajedrez (HTML + JS, sin dependencias)",
+  "scripts": {
+    "test": "node --test"
+  }
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ajedrez · salas</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script type="module" src="js/main.js"></script>
+</head>
+<body>
+<main>
+    <h1>Ajedrez</h1>
+
+    <section id="lobby" class="card" hidden>
+        <label>Tu nombre
+            <input id="name" maxlength="30" autocomplete="nickname">
+        </label>
+        <button id="create">Crear sala</button>
+        <div class="join">
+            <input id="code" maxlength="6" placeholder="Código de sala" autocomplete="off">
+            <button id="join">Unirse</button>
+        </div>
+    </section>
+
+    <section id="game" hidden>
+        <div id="board" class="board"></div>
+        <aside class="card">
+            <p>Sala <strong id="room-code" class="room-code"></strong></p>
+            <p>♔ Blancas: <span id="white-name"></span><br>♚ Negras: <span id="black-name"></span></p>
+            <p id="my-color" class="muted"></p>
+            <p id="status" class="status"></p>
+            <h2>Movimientos</h2>
+            <ol id="moves" class="moves"></ol>
+            <div class="actions">
+                <button id="resign">Rendirse</button>
+                <button id="leave" class="secondary">Salir</button>
+            </div>
+        </aside>
+    </section>
+
+    <p id="error" class="error" role="alert"></p>
+</main>
+
+<dialog id="promotion">
+    <form method="dialog">
+        <p>Promocionar a:</p>
+        <button value="Queen">♛ Dama</button>
+        <button value="Rook">♜ Torre</button>
+        <button value="Bishop">♝ Alfil</button>
+        <button value="Knight">♞ Caballo</button>
+    </form>
+</dialog>
+</body>
+</html>
