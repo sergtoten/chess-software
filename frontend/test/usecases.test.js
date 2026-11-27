@@ -2,9 +2,9 @@
 // demuestra que el adaptador de comunicación se sustituye sin tocar los casos de uso.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { FakeGameService } from "../js/adapters/FakeGameService.js";
-import { GameSession } from "../js/application/GameSession.js";
-import { CreateRoom, JoinRoom, MakeMove, RefreshGame, Resign } from "../js/application/usecases.js";
+import { FakeGameService } from "../public/js/adapters/FakeGameService.js";
+import { GameSession } from "../public/js/application/GameSession.js";
+import { CreateRoom, JoinRoom, MakeMove, RefreshGame, Resign } from "../public/js/application/usecases.js";
 
 const ANA = { id: "p1", name: "" };
 const BEA = { id: "p2", name: "" };

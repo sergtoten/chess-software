@@ -35,12 +35,14 @@ import java.io.File;
 public class Main {
 
     static void main() {
-        Javalin.create(Main::init).start(8080);
+        int port = Integer.parseInt(envOrDefault("PORT", "8080"));
+        Javalin.create(Main::init).start(port);
     }
 
     private static void init(JavalinConfig config) {
-        GameStore store = new FileGameStore(new File("games"));
-        RoomIndex index = new FileRoomIndex(new File("games/rooms"));
+        File dataDir = new File(envOrDefault("DATA_DIR", "games"));
+        GameStore store = new FileGameStore(dataDir);
+        RoomIndex index = new FileRoomIndex(new File(dataDir, "rooms"));
         GameSerializer serializer = new GameJsonSerializer(new FenPositionSerializer(new FenBoardSerializer(), new FenStateSerializer()));
         GameDeserializer deserializer = new GameJsonDeserializer(new FenPositionDeserializer(new FenBoardDeserializer(), new FenStateDeserializer()));
         Clock clock = new SystemClock();
@@ -69,6 +71,11 @@ public class Main {
         context.contentType("application/json");
         context.result(output.result());
         context.status(output.status());
+    }
+
+    private static String envOrDefault(String name, String defaultValue) {
+        String value = System.getenv(name);
+        return value != null ? value : defaultValue;
     }
 
 }

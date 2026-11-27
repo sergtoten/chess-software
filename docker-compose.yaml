@@ -1,0 +1,22 @@
+name: chess-software
+
+services:
+  game-service:
+    build: ./game-service
+    environment:
+      DATA_DIR: /data
+    volumes:
+      - games-data:/data
+
+  frontend:
+    image: nginx:stable
+    depends_on:
+      - game-service
+    ports:
+      - "127.0.0.1:8000:80"
+    volumes:
+      - "./frontend/public:/usr/share/nginx/html:ro"
+      - "./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro"
+
+volumes:
+  games-data:

@@ -2,7 +2,7 @@
 // (ruta, método, parámetros) y la traducción del JSON/FEN al modelo del frontend.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { HttpGameService } from "../js/adapters/HttpGameService.js";
+import { HttpGameService } from "../public/js/adapters/HttpGameService.js";
 
 const INITIAL = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 const PLAYER = { id: "p1", name: "Ana" };

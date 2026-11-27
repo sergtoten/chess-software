@@ -1,0 +1,7 @@
+# Git guarda los ficheros de texto con LF en el repositorio y los convierte al
+# final de línea del sistema al descargarlos (CRLF en Windows). Los binarios se detectan solos.
+* text=auto
+
+# Lo que se ejecuta dentro de contenedores Linux, siempre con LF también en la copia local.
+*.sh text eol=lf
+Dockerfile text eol=lf

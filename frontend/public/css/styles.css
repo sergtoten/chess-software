@@ -14,7 +14,7 @@
 
 body { margin: 0; }
 main { max-width: 980px; margin: 0 auto; padding: 24px 16px; }
-h1 { margin: 0 0 20px; }
+h1 { margin: 0 0 20px; text-align: center; }
 h2 { font-size: 1rem; margin: 16px 0 6px; }
 [hidden] { display: none !important; }
 
@@ -25,7 +25,7 @@ h2 { font-size: 1rem; margin: 16px 0 6px; }
     box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
 }
 
-#lobby { max-width: 360px; display: grid; gap: 12px; }
+#lobby { max-width: 360px; margin: 48px auto 0; display: grid; gap: 12px; }
 #lobby label { display: grid; gap: 4px; }
 .join { display: flex; gap: 8px; }
 .join input { flex: 1; text-transform: uppercase; }
@@ -36,28 +36,36 @@ button { border: 0; background: var(--accent); color: #fff; cursor: pointer; }
 button.secondary { background: #ddd; color: var(--text); }
 button:disabled { opacity: 0.45; cursor: default; }
 
-#game { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+#game { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; justify-content: center; }
 #game aside { flex: 1; min-width: 240px; }
 .room-code { font-family: ui-monospace, monospace; font-size: 1.4rem; letter-spacing: 3px; }
 .status { font-weight: 600; font-size: 1.1rem; }
 .muted { color: var(--muted); }
 .actions { display: flex; gap: 8px; margin-top: 16px; }
 .moves { max-height: 220px; overflow-y: auto; margin: 0; padding-left: 28px; font-family: ui-monospace, monospace; }
-.error { color: var(--error); min-height: 1.4em; }
+.error { color: var(--error); min-height: 1.4em; text-align: center; }
 
+/* Todas las casillas miden exactamente --square: la pieza no puede ensancharlas
+   y el panel lateral no puede encoger el tablero. Solo en pantallas estrechas
+   se reduce, y entonces todas por igual. */
 .board {
+    --square: 64px;
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    width: min(560px, 92vw);
-    aspect-ratio: 1;
+    grid-template-columns: repeat(8, var(--square));
+    grid-template-rows: repeat(8, var(--square));
+    flex: none;
     border: 4px solid #6d4c33;
     border-radius: 4px;
+}
+@media (max-width: 600px) {
+    .board { --square: 11vw; }
 }
 .square {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
     cursor: pointer;
     user-select: none;
 }
@@ -66,7 +74,7 @@ button:disabled { opacity: 0.45; cursor: default; }
 .square.last-move { box-shadow: inset 0 0 0 100px rgb(255 235 59 / 0.35); }
 .square.selected { box-shadow: inset 0 0 0 4px var(--accent); }
 
-.piece { font-size: min(52px, 8.5vw); line-height: 1; }
+.piece { font-size: calc(var(--square) * 0.78); line-height: 1; }
 .piece.white { color: #fff; text-shadow: 0 0 2px #000, 0 0 1px #000; }
 .piece.black { color: #111; }
 
